@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Atlas Middleware</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+</head>
+<body>
+  <style>
+    .form-actions {
+      margin-top: 15px;
+      padding: 19px 15px 20px;
+      border-top: 1px solid #ddd;
+      background-color: #f9f9f9;
+      border-radius: 0;
+    }
+    .thin-row {
+      margin-left:0;
+      margin-right:0;
+    } 
+  </style>
+  <div class="container">
+    <div class="page-header">
+      <h1>Sentença SQL <small>consulte seu banco de dados</small></h1>
+    </div>
+    <div class="row thin-row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label class="control-label">Sentença SQL </label>
+          <textarea id="statement" class="form-control" rows="4">SELECT codproduto, descricao1 FROM zw14ppro</textarea>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">Limite</label>
+          <input type="text" id="limit" class="form-control" value="100"/>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">Deslocamento</label>
+          <input type="text" id="offset" class="form-control" value="0"/>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-actions">
+          <button type="button" data-behavior="execute-sql-statement" class="btn btn-success">Execute</button>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="row thin-row">
+      <div class="col-md-12">
+        <div id="panel" class="panel panel-default">
+          <div class="panel-body">
+            SQL
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row thin-row">
+      <div class="col-md-12">
+        <div id="datatable" class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row thin-row">
+      <div class="col-md-12">
+          <button type="button" data-behavior="" class="btn btn-primary" style="width:100%" >Mais</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <script>
+    $('[data-behavior~=execute-sql-statement]').on('click', function() {
+      statement = $('textarea#statement').val();
+      $.post(
+          "/atlas/api/statements",
+          JSON.stringify({
+            "statement":statement,
+            "limit": parseInt($('input#limit').val(), 10),
+            "offset": parseInt($('input#offset').val(),10)
+          }), function(data) {
+        $("#panel div").empty().text(data.records+" : "+statement);
+        $("#datatable table thead tr:last").empty();
+        $.each(data.columns,function() {
+          $("#datatable table thead tr:last").append($("<th>").text(this.name));
+        }); 
+        $("#datatable table tbody").empty();      
+        $.each(data.rows,function() {
+          $("#datatable table tbody").append($("<tr>"));
+          $.each(this,function(index,column) {
+            $("#datatable table tbody tr:last").append($("<td>").text(column));
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
