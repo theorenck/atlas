@@ -4,8 +4,6 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Atlas Middleware</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
- 
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -23,7 +21,16 @@
     .thin-row {
       margin-left:0;
       margin-right:0;
-    } 
+    }
+
+    pre{
+      border: none;
+      padding: 0px;
+    }
+    .hljs{
+      background:#ecf0f1 !important;
+      padding: 0px;
+    }
   </style>
   <div class="navbar navbar-default">
     <div class="navbar-header">
@@ -32,9 +39,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Atlas</a>
+      <a class="navbar-brand" href="/atlas/">Atlas</a>
+
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/atlas/dashboard">Dashboard</a>
+        </li>
+      </ul>
+
     </div>
-  </div>  
+  </div>
   <div class="container">
     <h2>Query</h2>
     <div class="well">
@@ -74,6 +88,7 @@
       <div class="row">
         <div class="col-md-12">
           <div id="sql" class="well">
+          <pre><code class="sql"></code></pre>
           </div>
         </div>
       </div>
@@ -112,7 +127,7 @@
           "limit": parseInt($('input#limit').val(), 10),
           "offset": 0
         }), function(data) {
-          createHeader(data);  
+          createHeader(data);
           appendResults(data);
           $('[data-behavior~=execute-sql]').button("reset");
           $("#results-area").removeClass("hidden");
@@ -151,14 +166,19 @@
       $(".alert").remove();
       $("#results-area").addClass("hidden");
       $('[data-behavior~=see-more]').data("currentPage",0);
-      $("#sql").empty().text(statement);
+      $("#sql code").empty().text(statement);
+
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
       $("#results table thead").empty();
       $("#results table tbody").empty();
     }
 
     function getErrorMessage(xhr) {
       if (xhr.responseJSON !== undefined &&  xhr.responseJSON.errors !== undefined ) {
-        return xhr.responseJSON.errors.replace(/.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,"");
+        // return xhr.responseJSON.errors.replace(/.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,"");
+        return xhr.responseJSON.errors;
       } else if (xhr.status == 0) {
         return "There was an unexpected error when accessing the server.";
       } else {
@@ -170,10 +190,10 @@
       $("#results table thead").append($("<tr>"));
       $.each(data.columns,function() {
         $("#results table thead tr").append($("<th>").text(this.name));
-      }); 
+      });
     }
 
-    function appendResults(data) {    
+    function appendResults(data) {
       $.each(data.rows,function() {
         $("#results table tbody").append($("<tr>"));
         $.each(this,function(index,column) {
@@ -182,5 +202,9 @@
       });
     }
   </script>
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+
 </body>
 </html>
