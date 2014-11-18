@@ -184,10 +184,11 @@ options '/*' do
   halt HTTP_STATUS_OK
 end
 
-# options '/*' do
-#   response["Access-Control-Allow-Headers"] = "origin, x-requested-with, content-type"
-# end
-
 get '/atlas/' do
 	File.read(File.join('index.html'))
 end
+
+get '/atlas/dashboard' do
+	File.read(File.join('dashboard.html'))
+end
+
