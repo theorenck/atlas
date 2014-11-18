@@ -25,12 +25,6 @@
       padding-bottom: 5px;
     }
 
-    .grafico-cabecalho h1{
-      font-size: 120%;
-      font-weight: bold;
-      margin-top: 0px;
-    }
-
     .grafico-content{
       position: relative;
     }
@@ -78,19 +72,75 @@
 
   <div class="container">
 
-    <h3>
+    <h2>
       Painel de vendas
       <small>Acompanhe suas vendas :)</small>
-    </h3>
+    </h2>
 
     <div class="row">
       <div class="col-sm-12">
         <div class="well data-container">
+
           <span class="data-atual">Novembro/2014</span>
           <span class="data-especifica">dia 1º até hoje</span>
+
+          <div class="calendar-area pull-right">
+            <div id="reportrange" class="pull-right">
+                <span class="glyphicon glyphicon-calendar"></span>
+                <span class="text"></span>
+                <span class="caret"></span>
+            </div>
+
+<!--             <div class="dropdown">
+              <a href="javascript:void(0)" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                <span class="glyphicon glyphicon-calendar"></span>
+                <span class="caret"></span>
+              </a>
+              <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+
+              </div>
+            </div> -->
+          </div>
+
         </div>
       </div>
     </div>
+
+    <section>
+      <div class="row">
+
+        <div class="col-sm-4">
+          <h4>
+            Média Diária de Pedidos
+            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+          </h4>
+          <div class="well">
+            97 Pedidos
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h4>
+            Valor médio do Pedido
+            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+          </h4>
+          <div class="well">
+            R$ 165,00
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h4>
+            Média de Itens do Pedido
+            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+          </h4>
+          <div class="well">
+            6 Itens
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <section>
       <div class="row">
@@ -99,12 +149,12 @@
           <div class="grafico-cabecalho">
             <div class="row">
               <div class="col-sm-6">
-                <h1>Volume de vendas diário</h1>
+                <h4>Volume de vendas diário</h4>
               </div>
               <div class="col-sm-6">
-                 <button class="pull-right btn btn-default btn-sm" data-behaivor="carregar-dados">
+                <button class="pull-right btn btn-primary btn-sm" data-behaivor="carregar-dados">
                     <span class="glyphicon glyphicon-refresh"></span>
-                 </button>
+                </button>
               </div>
             </div>
           </div>
@@ -123,10 +173,14 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment-with-locales.min.js"></script>
+  <script src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/moment.min.js"></script>
   <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
+  <script src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+  <link rel="stylesheet" href="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css">
 
   <script>
+  moment.locale('pt-BR');
 
   var Dashboard = {
 
@@ -227,6 +281,33 @@
     init : function(){
       Dashboard.efetuaChamada();
       $(document).on('click', '[data-behaivor~=carregar-dados]', Dashboard.efetuaChamada);
+      $('#reportrange').daterangepicker(
+        {
+          ranges: {
+             'Hoje': [moment(), moment()],
+             'Ontem': [moment().subtract('days', 1), moment().subtract('days', 1)],
+             'Últimos 7 Dias': [moment().subtract('days', 6), moment()],
+             'Últimos 30 Dias': [moment().subtract('days', 29), moment()],
+             'Este Mês': [moment().startOf('month'), moment().endOf('month')],
+             'Último Mês': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+          },
+          startDate: moment().subtract('days', 29),
+          endDate: moment(),
+          locale: {
+            applyLabel: 'Aplicar',
+            cancelLabel: 'Limpar',
+            fromLabel: 'De',
+            toLabel: 'Para',
+            customRangeLabel: 'Personalizado',
+            daysOfWeek: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex','Sab'],
+            monthNames: ['Janeiro', 'Favereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+          }
+
+        },
+        function(start, end) {
+            $('#reportrange span.text').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+    );
     },
   };
 
