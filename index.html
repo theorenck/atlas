@@ -5,10 +5,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Atlas Middleware</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+ 
+  <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <style>
+    .navbar {
+      border-radius: 0;
+    }
     .form-actions {
       margin-top: 15px;
       padding: 19px 15px 20px;
@@ -21,92 +25,162 @@
       margin-right:0;
     } 
   </style>
+  <div class="navbar navbar-default">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Atlas</a>
+    </div>
+  </div>  
   <div class="container">
-    <div class="page-header">
-      <h1>Sentença SQL <small>consulte seu banco de dados</small></h1>
-    </div>
-    <div class="row thin-row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <label class="control-label">Sentença SQL </label>
-          <textarea id="statement" class="form-control" rows="4">SELECT codproduto, descricao1 FROM zw14ppro</textarea>
+    <h2>Query</h2>
+    <div class="well">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">SQL</label>
+            <textarea id="statement" class="form-control" rows="4">SELECT codproduto, codbarras, descricao1 FROM zw14ppro</textarea>
+          </div>
         </div>
       </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <label class="control-label">Limite</label>
-          <input type="text" id="limit" class="form-control" value="100"/>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label class="control-label">Limit</label>
+            <input type="text" id="limit" class="form-control" value="100"/>
+          </div>
         </div>
+       <!--  <div class="col-md-2" style="padding-top: 28px;">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" checked> Limit query?
+            </label>
+          </div>
+        </div> -->
       </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <label class="control-label">Deslocamento</label>
-          <input type="text" id="offset" class="form-control" value="0"/>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="form-actions">
-          <button type="button" data-behavior="execute-sql-statement" class="btn btn-success">Execute</button>
-        </div>
-      </div>
-    </div>
-    <br/>
-    <div class="row thin-row">
-      <div class="col-md-12">
-        <div id="panel" class="panel panel-default">
-          <div class="panel-body">
-            SQL
+      <div class="row">
+        <div class="col-md-12">
+          <div>
+            <button type="button" data-loading-text="Loading..." data-behavior="execute-sql" class="btn btn-success" style="width:100%">Execute SQL</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="row thin-row">
-      <div class="col-md-12">
-        <div id="datatable" class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+    <div  id="results-area" class="hidden">
+      <h2>Results</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="sql" class="well">
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row thin-row">
-      <div class="col-md-12">
-          <button type="button" data-behavior="" class="btn btn-primary" style="width:100%" >Mais</button>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+          <div id="results" class="panel panel-default">
+            <table class="table table-bordered table-striped">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary" style="width:100%" data-behavior="see-more" data-loading-text="Loading...">See more</button>
+        </div>
+      </div>
+      <br/>
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <script>
-    $('[data-behavior~=execute-sql-statement]').on('click', function() {
-      statement = $('textarea#statement').val();
+
+    $('[data-behavior~=execute-sql]').on('click', function() {
+      $('[data-behavior~=execute-sql]').button("loading");
+      var statement = $('textarea#statement').val();
+      reset(statement);
       $.post(
-          "/atlas/api/statements",
-          JSON.stringify({
-            "statement":statement,
-            "limit": parseInt($('input#limit').val(), 10),
-            "offset": parseInt($('input#offset').val(),10)
-          }), function(data) {
-        $("#panel div").empty().text(data.records+" : "+statement);
-        $("#datatable table thead tr:last").empty();
-        $.each(data.columns,function() {
-          $("#datatable table thead tr:last").append($("<th>").text(this.name));
-        }); 
-        $("#datatable table tbody").empty();      
-        $.each(data.rows,function() {
-          $("#datatable table tbody").append($("<tr>"));
-          $.each(this,function(index,column) {
-            $("#datatable table tbody tr:last").append($("<td>").text(column));
-          });
-        });
+        "/atlas/api/statements",
+        JSON.stringify({
+          "statement":statement,
+          "limit": parseInt($('input#limit').val(), 10),
+          "offset": 0
+        }), function(data) {
+          createHeader(data);  
+          appendResults(data);
+          $('[data-behavior~=execute-sql]').button("reset");
+          $("#results-area").removeClass("hidden");
+        }
+      ).fail( function(xhr, textStatus, errorThrown) {
+        var message = getErrorMessage(xhr);
+        $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+        $('[data-behavior~=execute-sql]').button("reset");
       });
     });
+
+    $('[data-behavior~=see-more]').on('click', function() {
+      $('[data-behavior~=see-more]').button("loading");
+      var limit = parseInt($('input#limit').val(), 10);
+      var page = $(this).data("currentPage") || 1;
+      var statement = $("#sql").text();
+      $.post(
+        "/atlas/api/statements",
+        JSON.stringify({
+          "statement":statement,
+          "limit": limit,
+          "offset": limit * page
+        }), function(data) {
+          appendResults(data);
+          $('[data-behavior~=see-more]').button("reset");
+          $('[data-behavior~=see-more]').data("currentPage",page+1);
+        }
+      ).fail( function(xhr, textStatus, errorThrown) {
+        var message = getErrorMessage(xhr);
+        $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+        $('[data-behavior~=see-more]').button("reset");
+      });
+    });
+
+    function reset(statement) {
+      $(".alert").remove();
+      $("#results-area").addClass("hidden");
+      $('[data-behavior~=see-more]').data("currentPage",0);
+      $("#sql").empty().text(statement);
+      $("#results table thead").empty();
+      $("#results table tbody").empty();
+    }
+
+    function getErrorMessage(xhr) {
+      if (xhr.responseJSON !== undefined &&  xhr.responseJSON.errors !== undefined ) {
+        return xhr.responseJSON.errors.replace(/.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,"");
+      } else if (xhr.status == 0) {
+        return "There was an unexpected error when accessing the server.";
+      } else {
+        return xhr.statusText;
+      }
+    }
+
+    function createHeader(data) {
+      $("#results table thead").append($("<tr>"));
+      $.each(data.columns,function() {
+        $("#results table thead tr").append($("<th>").text(this.name));
+      }); 
+    }
+
+    function appendResults(data) {    
+      $.each(data.rows,function() {
+        $("#results table tbody").append($("<tr>"));
+        $.each(this,function(index,column) {
+          $("#results table tbody tr:last").append($("<td nowrap>").text(column));
+        });
+      });
+    }
   </script>
 </body>
 </html>
