@@ -31,6 +31,22 @@
       background:#ecf0f1 !important;
       padding: 0px;
     }
+
+    textarea#statement{
+      -webkit-transition: height ease-in-out 0.6s;
+      -o-transition: height ease-in-out  0.6s;
+      transition: height ease-in-out 0.6s;
+      height: 50px;
+    }
+
+    textarea#statement:focus{
+      height: 450px;
+      resize: none;
+    }
+
+    div#sql pre {
+      margin: 0;
+    }
   </style>
   <div class="navbar navbar-default">
     <div class="navbar-header">
@@ -46,11 +62,10 @@
           <a href="/atlas/dashboard">Dashboard</a>
         </li>
       </ul>
-
     </div>
   </div>
   <div class="container">
-    <h2>Query</h2>
+    <h2>Consulta</h2>
     <div class="well">
       <div class="row">
         <div class="col-md-12">
@@ -63,28 +78,21 @@
       <div class="row">
         <div class="col-md-2">
           <div class="form-group">
-            <label class="control-label">Limit</label>
+            <label class="control-label">Limite</label>
             <input type="text" id="limit" class="form-control" value="100"/>
           </div>
         </div>
-       <!--  <div class="col-md-2" style="padding-top: 28px;">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" checked> Limit query?
-            </label>
-          </div>
-        </div> -->
       </div>
       <div class="row">
         <div class="col-md-12">
           <div>
-            <button type="button" data-loading-text="Loading..." data-behavior="execute-sql" class="btn btn-success" style="width:100%">Execute SQL</button>
+            <button type="button" data-loading-text="Carregando..." data-behavior="execute-sql" class="btn btn-success" style="width:100%">Executar SQL</button>
           </div>
         </div>
       </div>
     </div>
     <div  id="results-area" class="hidden">
-      <h2>Results</h2>
+      <h2>Resultados</h2>
       <div class="row">
         <div class="col-md-12">
           <div id="sql" class="well">
@@ -106,7 +114,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <button type="button" class="btn btn-primary" style="width:100%" data-behavior="see-more" data-loading-text="Loading...">See more</button>
+          <button type="button" class="btn btn-primary" style="width:100%" data-behavior="see-more" data-loading-text="Carregando">Ver mais</button>
         </div>
       </div>
       <br/>
@@ -131,6 +139,7 @@
           appendResults(data);
           $('[data-behavior~=execute-sql]').button("reset");
           $("#results-area").removeClass("hidden");
+          $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
         }
       ).fail( function(xhr, textStatus, errorThrown) {
         var message = getErrorMessage(xhr);
@@ -165,6 +174,7 @@
     function reset(statement) {
       $(".alert").remove();
       $("#results-area").addClass("hidden");
+      $("#results-area h2 small").remove();
       $('[data-behavior~=see-more]').data("currentPage",0);
       $("#sql code").empty().text(statement);
 
