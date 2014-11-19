@@ -71,17 +71,24 @@ function getErrorMessage(xhr) {
 }
 
 function createHeader(data) {
-  $("#results table thead").append($("<tr>"));
+  var _tr;
+  $("#results table").append($("<thead>")).append($("<tr>"));
+  _tr = $("#results table thead tr:last");
   $.each(data.columns,function() {
-    $("#results table thead tr").append($("<th>").text(this.name));
+    _tr.append($("<th>").text(this.name));
   });
 }
 
 function appendResults(data) {
+  var _tbody;
+  
+  $("#results table").append($("<tbody>"));
+  _tbody = $("#results table tbody");
   $.each(data.rows,function() {
-    $("#results table tbody").append($("<tr>"));
+    _tbody.append($("<tr>"));
     $.each(this,function(index,column) {
-      $("#results table tbody tr:last").append($("<td nowrap>").text(column));
+      _tbody.find("tr:last").append($("<td nowrap>").text(column));
     });
   });
 }
+
