@@ -53,22 +53,29 @@
 
     <section class="meta-container">
       <div class="row">
-        <div class="col-sm-4">
+
+        <div class="col-sm-4 media-diaria-de-pedidos">
           <h3>
             Média diária de pedidos
             <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
           </h3>
           <div class="well">
-            <div class="info">97 Pedidos</div>
+            <div class="info">
+              <span class="qtd"></span>
+              Pedidos
+            </div>
           </div>
         </div>
-        <div class="col-sm-4">
+
+        <div class="col-sm-4 valor-medio-do-pedido">
           <h3>
             Valor médio do pedido
             <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
           </h3>
           <div class="well">
-            <div class="info">R$ 165,00</div>
+            <div class="info">
+              R$ <span class="qtd">165,00</span>
+            </div>
           </div>
         </div>
         <div class="col-sm-4">
@@ -114,8 +121,8 @@
   <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
   <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
   <script src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
   <script src="/assets/scripts/dashboard.js"></script>
 
-  <textarea id="query" style="display:none" cols="30" rows="10">SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS "DATA_EMISSAO", COUNT(p.numeropedido) AS "QUANTIDADE", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS "VOLUME_VENDAS", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS "VALOR_MEDIO_PEDIDO" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'} GROUP BY p.dataemiss ORDER BY p.dataemiss</textarea>
 </body>
 </html>
