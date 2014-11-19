@@ -1,0 +1,86 @@
+/* General Styles */
+
+.navbar {
+  border-radius: 0;
+}
+
+pre {
+  border: none;
+  padding: 0px;
+}
+
+/* SQL Syntax Highlight Customization */
+
+.hljs{
+  background:#ecf0f1 !important;
+  padding: 0px;
+}
+
+.hljs-keyword {
+  color:#f39c12 !important;
+}
+
+.hljs-literal, .hljs-number {
+  color: #18BC9D !important;
+}
+
+.hljs-string {
+  color:#3498db !important;
+}
+
+/* Index Specifics (please let me out :S) */
+
+textarea#statement{
+  -webkit-transition: height ease-in-out 0.6s;
+  -o-transition: height ease-in-out  0.6s;
+  transition: height ease-in-out 0.6s;
+  height: 50px;
+}
+
+textarea#statement:focus{
+  height: 450px;
+  resize: none;
+}
+
+div#sql pre {
+  margin: 0;
+}
+
+/* Dashboard */
+
+.data-container .data-atual{
+  font-weight: bold;
+  font-size:120%;
+}
+
+.data-container .data-especifica{
+  color: #333;
+}
+
+.grafico-cabecalho{
+  border-bottom: 1px solid #ecf0f1;
+  padding-bottom: 5px;
+}
+
+.grafico-content{
+  position: relative;
+}
+
+.grafico-content .loader{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(236, 240, 241, 0.6);
+  display: none;
+}
+
+.grafico-content .loader.visible{
+  display: block;
+}
+
+.grafico-content .loader p{
+  font-family: "Helvetica";
+  font-size: 120%;
+  color: #333;
+  padding-top: 10%;
+}
