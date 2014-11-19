@@ -52,10 +52,19 @@
     </div>
     <div  id="results-area" class="hidden">
       <h2>Resultados</h2>
-      <div class="row">
-        <div class="col-md-12">
-          <div id="sql" class="well">
-          <pre><code class="sql"></code></pre>
+      <div class="well">
+        <div class="row">
+          <div class="col-md-12">
+            <div id="sql">
+              <pre><code class="sql"></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div>
+              <button type="button" data-loading-text="Carregando..." data-behavior="edit-sql" class="btn btn-default" style="width:100%">Editar SQL</button>
+            </div>
           </div>
         </div>
       </div>
@@ -82,9 +91,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <script src="/assets/scripts/index.js"></script>
-
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/default.min.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
-
 </body>
 </html>

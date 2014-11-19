@@ -6,7 +6,8 @@
 
 pre {
   border: none;
-  padding: 0px;
+  padding: 0;
+  margin: 0 0 20px;
 }
 
 /* SQL Syntax Highlight Customization */
@@ -38,12 +39,8 @@ textarea#statement{
 }
 
 textarea#statement:focus{
-  height: 450px;
+  height: 400px;
   resize: none;
-}
-
-div#sql pre {
-  margin: 0;
 }
 
 /* Dashboard */

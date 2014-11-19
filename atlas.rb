@@ -7,17 +7,24 @@ require 'json'
 
 class Atlas < Sinatra::Base
 
-	set :static, true
 	set :public_folder, File.dirname(__FILE__) + '/public'
-
+	
 	datasource = 'atlas'
 	api_path = '/api'
-
+	
+	enable :logging
+	
 	use Rack::Cors do
 	  allow do
 	    origins '*'
 	    resource "#{api_path}/*", :headers => :any, :methods => [:get, :post, :put, :delete]
 	  end
+	end
+
+	options '/*' do
+	  response.headers["Allow"] = "HEAD,GET,PUT,DELETE,OPTIONS"
+	  response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
+	  halt HTTP_STATUS_OK
 	end
 
 	def utf8(string)
@@ -41,6 +48,7 @@ class Atlas < Sinatra::Base
 	end
 
 	def fetch(statement,offset=nil,limit=nil)
+		# statement.nrows
 		rows = []
 		if offset and limit
 			((offset+1)..((offset+limit))).each do |n|
@@ -170,7 +178,7 @@ class Atlas < Sinatra::Base
 				statement = connection.run(params[:statement])
 				columns = columns(statement)
 				rows = fetch(statement, params[:offset], params[:limit])
-				json_response 200, { records: rows.length, columns: columns, rows: rows }
+				json_response 200, { records: statement.nrows, fetched: rows.length, columns: columns, rows: rows }
 		  rescue JSON::ParserError => e
 				json_response 400, { errors:e.message }
 			rescue ODBC::Error => e
@@ -377,12 +385,6 @@ class Atlas < Sinatra::Base
 				connection.disconnect if connection
 			end
 		end
-	end
-
-	options '/*' do
-	  response.headers["Allow"] = "HEAD,GET,PUT,DELETE,OPTIONS"
-	  response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept"
-	  halt HTTP_STATUS_OK
 	end
 
 	get '/' do
