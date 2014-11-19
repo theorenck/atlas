@@ -5,7 +5,7 @@ var Dashboard = {
   geraGrafico : function(data){
     var labels   = [];
     var datasets = [];
-    var valores  = { total : [], medio : [] };
+    var valores  = { total : [], media : [] };
     var dia;
 
     $.each(data.rows, function(el, val){
@@ -13,7 +13,7 @@ var Dashboard = {
 
       labels.push(dia);
       valores.total.push(val[3]);
-      valores.medio.push(val[2]);
+      valores.media.push(val[2]);
 
     });
 
@@ -28,7 +28,7 @@ var Dashboard = {
           pointStrokeColor: "#fff",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(220,220,220,1)",
-          data: valores.medio
+          data: valores.media
         },
         {
           label: "Volume total",
@@ -123,7 +123,10 @@ var Dashboard = {
 
       },
       function(start, end) {
-          $('#reportrange span.text').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+          $('.data-container .data-atual').html(start.format('MMMM/YYYY'));
+          $('.data-container .data-especifica').html(start.format('D') + ' até ' + end.format('D'));
+
+          $('#reportrange span.text').html(start.format('D [de] MMMM, YYYY') + ' - ' + end.format('D [de] MMMM, YYYY'));
       }
   );
   },

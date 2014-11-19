@@ -8,25 +8,26 @@ pre {
   border: none;
   padding: 0;
   margin: 0 0 20px;
+  background-color: transparent;
 }
 
 /* SQL Syntax Highlight Customization */
 
 .hljs{
-  background:#ecf0f1 !important;
+  background:transparent;
   padding: 0px;
 }
 
 .hljs-keyword {
-  color:#f39c12 !important;
+  color:#f39c12;
 }
 
 .hljs-literal, .hljs-number {
-  color: #18BC9D !important;
+  color: #18BC9D;
 }
 
 .hljs-string {
-  color:#3498db !important;
+  color:#3498db;
 }
 
 /* Index Specifics (please let me out :S) */
@@ -81,3 +82,9 @@ textarea#statement:focus{
   color: #333;
   padding-top: 10%;
 }
+
+.meta-container .info{
+  font-size: 36px;
+  text-align: right;
+}
+
