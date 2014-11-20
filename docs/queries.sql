@@ -1,19 +1,19 @@
 -- Volume de vendas de diário
 
-SELECT 
-  {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS "DATA_EMISSAO", 
-  COUNT(p.numeropedido) AS "QUANTIDADE", 
+SELECT
+  {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS "DATA_EMISSAO",
+  COUNT(p.numeropedido) AS "QUANTIDADE",
   {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS "VOLUME_VENDAS",
   {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS "VOLUME_VENDAS_LIQUIDO",
   {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS "VALOR_MEDIO_PEDIDO"
-FROM 
+FROM
   zw14vped p
-WHERE 
+WHERE
   p.situacao = 'Finalizado'
   AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
-GROUP BY 
+GROUP BY
   p.dataemiss
-ORDER BY 
+ORDER BY
   p.dataemiss
 
 -- Valor médio do pedido
