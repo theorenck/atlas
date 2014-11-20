@@ -1,3 +1,13 @@
+-- Volume de vendas total do período
+
+SELECT
+  {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS "VOLUME_VENDAS"
+FROM
+  zw14vped p
+WHERE
+  p.situacao = 'Finalizado'
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+
 -- Volume de vendas de diário
 
 SELECT
@@ -16,7 +26,7 @@ GROUP BY
 ORDER BY
   p.dataemiss
 
--- Valor médio do pedido
+-- Volume de vendas médio do pedido
 
 SELECT
   {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS "VALOR_MEDIO_PEDIDO"
