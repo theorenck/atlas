@@ -9,23 +9,23 @@ var Indicadores = {
   },
 
   volumeVendasDiario : function(){
-    return "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = 'Finalizado'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY p.dataemiss ORDER BY p.dataemiss";
+    return "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = 'Finalizado'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY p.dataemiss ORDER BY p.dataemiss";
   },
 
   valorMedioDoPedido : function(){
-    return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   mediaDiariaDePedidos : function(qtdDias){
-    return "SELECT COUNT(p.numeropedido)/" + qtdDias + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(p.numeropedido)/" + qtdDias + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   numeroPedidosPeriodo : function(){
-    return "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   mediaItemsDoPedido : function(numeroPedidos){
-    return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
 };
@@ -40,14 +40,21 @@ var Dashboard = {
       return;
     }
 
+    console.log(data.columns);
+
     var valores = Dashboard.prepareDataset(data.rows);
-    console.log(valores);
+
     $('#volume-vendas').highcharts({
       chart: {
         type: 'areaspline'
       },
       title : {
-        text : "Volume de vendas diário"
+        text : "<h3>Volume de vendas diário</h3>",
+        useHtml : true,
+        style : {
+          fontFamily : "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          fontSize : '19px'
+        }
       },
       legend: {
           layout: 'vertical',
@@ -65,12 +72,12 @@ var Dashboard = {
       },
       yAxis: {
           title: {
-              text: 'R$'
+              text: false
           }
       },
       tooltip: {
           shared: true,
-          valueSuffix: ' units'
+          valuePreffix: 'R$ '
       },
       credits: {
           enabled: false
@@ -80,14 +87,20 @@ var Dashboard = {
               fillOpacity: 0.5
           }
       },
-      series: [{ name: 'Valor Médio do Pedido', data : valores.valorMedioDoPedido}]
+      series: [
+        { name: 'Volume de vendas diário', data : valores.volumeVendas},
+        // { name: 'Valor Médio do Pedido', data : valores.valorMedioDoPedido}
+      ]
     });
 
+  console.log(valores);
 
   },
 
   prepareDataset : function(rows){
     var dataSet   = [];
+
+    console.log(rows);
 
     var dataAtual = moment(Indicadores.periodo.inicio).format("YYYY-MM-DD");
     var dataFinal = moment(Indicadores.periodo.fim).format("YYYY-MM-DD");
@@ -111,10 +124,9 @@ var Dashboard = {
 
     $.each(dataSet, function(el, val){
       data      = val[0].split('-');
-      dia       = data[2] + '/' + moment(val[0]).format('MMM');
-      diaSemana = moment(val[0]).format('ddd');
+      diaSemana = moment(val[0]).format('dd');
 
-      valores.labels.push(diaSemana + ' ' + dia);
+      valores.labels.push(diaSemana + ' ' + data[2]);
       valores.volumeVendas.push(val[2]);
       valores.valorMedioDoPedido.push(val[4]);
 
@@ -122,7 +134,7 @@ var Dashboard = {
         valores.plotBands.push({
           from: el - 0.5,
           to: el + 1.5,
-          color: 'rgba(192, 192, 192, .3)'
+          color: 'rgba(192, 192, 192, .2)'
         });
       }
 
@@ -239,6 +251,12 @@ var Dashboard = {
     Dashboard.fetchIndicadores();
 
     /* @todo Dividir a qtd de dias pelo periodo */
+
+    // var a = moment('1800-12-29');
+    // var b = moment('2000-01-01');
+    // var days = a.diff(b, 'days');
+
+
   }
 };
 
