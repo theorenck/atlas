@@ -13,7 +13,6 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       "offset": 0
     }), function(data) {
       createHeader(data);
-      createBody();
       appendResults(data);
       _submit.button("reset");
       $("#results-area").removeClass("hidden");
@@ -65,7 +64,7 @@ function reset(statement) {
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
   });
-  $("#results table thead").empty();
+  $("#results table thead").remove();
   $("#results table tbody").empty();
 }
 
@@ -86,22 +85,45 @@ function getFriendlyMessage(message) {
 }
 
 function createHeader(data) {
-  $("#results table").append($("<thead>").html($("<tr>")));
-  $.each(data.columns,function() {
-    $("#results table thead tr").append($("<th>").text(this.name));
-  });
+  var _table   = $("#results table");
+  var _thead   = _table.append('<thead>').find('thead');
+
+  var view     = $('#tableResultsHeader').html();
+  var template = _.template(view, { columns : data.columns });
+
+  $(_thead).html(template);
 }
 
-function createBody() {
-  $("#results table").append($("<tbody>"));
+function createBody(table){
+  var _tbody = $(table).find('tbody');
+
+  if(_tbody.length === 0){
+    _tbody = $(table).append('<tbody>').find('tbody');
+  }
+
+  return _tbody;
 }
 
 function appendResults(data) {
-  $.each(data.rows,function() {
-    $("#results table tbody").append($("<tr>"));
-    $.each(this,function(index,column) {
-      $("#results table tbody tr:last").append($("<td nowrap>").text(column));
-    });
-  });
+  var _table = $("#results table");
+  var _tbody = createBody(_table);
+
+  var view     = $('#tableResultsRows').html();
+  var template = _.template(view, { rows : data.rows });
+
+  $(_tbody).append(template);
 }
 
+
+$(function(){
+
+  $(document).scroll(function(){
+    var docHeight  = $(document).height();
+    var scrollTop  = $(document).scrollTop();
+    // var percentTop =
+
+    // if()
+
+  });
+
+});
