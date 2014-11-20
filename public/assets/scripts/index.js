@@ -1,24 +1,26 @@
+var API = { address : "http://localhost:4567/api" };
+
 $('[data-behavior~=execute-sql]').on('submit', function() {
-  $('[data-behavior~=execute-sql]').button("loading");
-  // $('input[type="submit"]').button("loading");
+  var _submit = $(this).find('button[type="submit"]')
   var statement = $('textarea#statement').val();
+  _submit.button("loading");
   reset(statement);
   $.post(
-    "/api/statements",
+    API.address + "/statements",
     JSON.stringify({
-      "statement":statement,
+      "statement": statement,
       "limit": parseInt($('input#limit').val(), 10),
       "offset": 0
     }), function(data) {
       createHeader(data);
       createBody();
       appendResults(data);
-      $('[data-behavior~=execute-sql]').button("reset");
+      _submit.button("reset");
       $("#results-area").removeClass("hidden");
       $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
   }).fail(function(xhr, status, error) {
     fail(xhr, status, error, function() {
-      $('[data-behavior~=execute-sql]').button("reset");
+      _submit.button("reset");
     });
   });
   return false;
@@ -30,7 +32,7 @@ $('[data-behavior~=see-more]').on('click', function() {
   var page = $(this).data("currentPage") || 1;
   var statement = $("#sql").text();
   $.post(
-    "/api/statements",
+    API.address + "/statements",
     JSON.stringify({
       "statement":statement,
       "limit": limit,
@@ -49,7 +51,9 @@ $('[data-behavior~=see-more]').on('click', function() {
 function fail(xhr, textStatus, errorThrown, callback) {
   var message = getErrorMessage(xhr);
   $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
-  callback.call();
+  if (callback !== undefined && typeof callback === "function") {
+    callback.call();
+  }
 }
 
 function reset(statement) {
