@@ -1,7 +1,7 @@
 -- Volume de vendas de diário
 
 SELECT
-  {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS "DATA_EMISSAO",
+  {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS "DATA_EMISSAO",
   COUNT(p.numeropedido) AS "QUANTIDADE",
   {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS "VOLUME_VENDAS",
   {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS "VOLUME_VENDAS_LIQUIDO",
@@ -10,7 +10,7 @@ FROM
   zw14vped p
 WHERE
   p.situacao = 'Finalizado'
-  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
 GROUP BY
   p.dataemiss
 ORDER BY
@@ -24,7 +24,7 @@ FROM
   zw14vped p
 WHERE
   p.situacao = 'Finalizado'
-  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
 
 -- Média diária de pedidos (considerar dias úteis (reais/padrão)? apenas dias que houvevenda? total de dias do intervalo apurado?)
 
@@ -34,7 +34,7 @@ FROM
   zw14vped p
 WHERE
   p.situacao = 'Finalizado'
-  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
 
 -- Média de itens por pedido
 
@@ -46,7 +46,7 @@ FROM
   zw14vped p
 WHERE
   p.situacao = 'Finalizado'
-  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
 
 ---- Query 2: Cálculo do indicador, onde 114 deve ser substituído pelo número de pedidos no período (Query 2: PEDIDOS_PERIODO)
 
@@ -56,4 +56,4 @@ FROM
   {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido}
 WHERE
   zw14vped.situacao = 'Finalizado'
-  AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
+  AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '2013-11-01 00:00:00'} AND {TS '2013-11-30 00:00:00'}
