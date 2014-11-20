@@ -1,56 +1,38 @@
 moment.locale('pt-br');
 
+var Api = { address : "http://localhost:4567/api" };
 var Indicadores = {
 
   periodo : {
-    inicio : '2013-11-01 00:00:00',//(moment().format("YYYY-MM-DD 00:00:00")),
-    fim    : '2013-11-30 00:00:00'//(moment(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)).format("YYYY-MM-DD 00:00:00"))
+    inicio : (moment({ day: 1, month : 10 , year : 2013 }).format("YYYY-MM-DD 00:00:00")),
+    fim    : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00"))
   },
 
   volumeVendasDiario : function(){
-    return "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY p.dataemiss ORDER BY p.dataemiss";
+    return "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = 'Finalizado'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY p.dataemiss ORDER BY p.dataemiss";
   },
 
   valorMedioDoPedido : function(){
-    return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   mediaDiariaDePedidos : function(qtdDias){
-    return "SELECT COUNT(p.numeropedido)/" + qtdDias + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(p.numeropedido)/" + qtdDias + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   numeroPedidosPeriodo : function(){
-    return "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   mediaItemsDoPedido : function(numeroPedidos){
-    return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-73049, {D '2001-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+    return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
-  executar : function(sql){
-    var _data;
-
-    $.post(
-      '/api/statements',
-      JSON.stringify({"statement": statement})
-    )
-    .done(function(data){
-      _data = data;
-    });
-
-    return _data;
-  }
 };
 
 var Dashboard = {
 
   renderGraph : function(data){
-    var labels   = [];
-    var datasets = [];
-    var valores  = { total : [], media : [] };
-    var dia;
-    var data;
-
     if(data.records === 0 ){
       $(".alert").remove();
       var message = "Não encontramos nenhum dado para esse periodo";
@@ -58,66 +40,108 @@ var Dashboard = {
       return;
     }
 
-    $.each(data.rows, function(el, val){
-      data = val[0].split('-');
-      dia  = data[2] + '/' + data[1];
+    console.log(data.columns);
 
-      labels.push(dia);
-      valores.total.push(val[3]);
-      valores.media.push(val[2]);
+    var valores = Dashboard.prepareDataset(data.rows);
+
+    $('#volume-vendas').highcharts({
+      chart: {
+        type: 'areaspline'
+      },
+      title : {
+        text : "<h3>Volume de vendas diário</h3>",
+        useHtml : true,
+        style : {
+          fontFamily : "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          fontSize : '19px'
+        }
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'left',
+          verticalAlign: 'top',
+          x: 150,
+          y: 100,
+          floating: true,
+          borderWidth: 1,
+          backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+      },
+      xAxis: {
+          categories: valores.labels,
+          plotBands: valores.plotBands
+      },
+      yAxis: {
+          title: {
+              text: false
+          }
+      },
+      tooltip: {
+          shared: true,
+          valuePreffix: 'R$ '
+      },
+      credits: {
+          enabled: false
+      },
+      plotOptions: {
+          areaspline: {
+              fillOpacity: 0.5
+          }
+      },
+      series: [
+        { name: 'Volume de vendas diário', data : valores.volumeVendas},
+        // { name: 'Valor Médio do Pedido', data : valores.valorMedioDoPedido}
+      ]
     });
 
-    data = {
-      "labels" : labels,
-      "datasets" : [
-        {
-          label: "Outro Volume",
-          fillColor: "rgba(220,220,220,0.2)",
-          strokeColor: "rgba(220,220,220,1)",
-          pointColor: "rgba(220,220,220,1)",
-          pointStrokeColor: "#fff",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(220,220,220,1)",
-          data: valores.media
-        },
-        {
-          label: "Volume total",
-          fillColor: "rgba(151,187,205,0.2)",
-          strokeColor: "rgba(151,187,205,1)",
-          pointColor: "rgba(151,187,205,1)",
-          pointStrokeColor: "#fff",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(151,187,205,1)",
-          data: valores.total
-        }
-      ]
+  console.log(valores);
+
+  },
+
+  prepareDataset : function(rows){
+    var dataSet   = [];
+
+    console.log(rows);
+
+    var dataAtual = moment(Indicadores.periodo.inicio).format("YYYY-MM-DD");
+    var dataFinal = moment(Indicadores.periodo.fim).format("YYYY-MM-DD");
+
+    var valores   = {
+      valorMedioDoPedido : [],
+      volumeVendas : [],
+      labels : [],
+      plotBands : []
     };
 
-    var options = {
-      scaleOverride: true,
-      scaleLabel: "R$ <%=value%>",
-      scaleSteps: 5,
-      scaleStepWidth: 10000,
-      scaleStartValue : 0,
-      responsive : true,
-      maintainAspectRatio : false,
-      scaleShowGridLines : false,
-      scaleGridLineColor : "rgba(0,0,0,.05)",
-      scaleGridLineWidth : 1,
-      bezierCurve : true,
-      bezierCurveTension : 0.4,
-      pointDot : true,
-      pointDotRadius : 4,
-      pointDotStrokeWidth : 1,
-      pointHitDetectionRadius : 20,
-      datasetStroke : true,
-      datasetStrokeWidth : 1,
-      datasetFill : true,
-      tooltipTemplate : "<%= datasetLabel %>: R$ <%= value %>",
-    };
+    while(dataAtual <= dataFinal){
+      var find = _.find(rows, function(el) {
+        return (el[0] === dataAtual);
+      });
 
-    var ctx = $("#volume-vendas").get(0).getContext("2d");
-    var myLineChart = new Chart(ctx).Line(data, options);
+      find === undefined ? dataSet.push([dataAtual,0,0,0,0]) : dataSet.push(find);
+
+      dataAtual = moment(dataAtual).add(1, 'day').format("YYYY-MM-DD");
+    }
+
+    $.each(dataSet, function(el, val){
+      data      = val[0].split('-');
+      diaSemana = moment(val[0]).format('dd');
+
+      valores.labels.push(diaSemana + ' ' + data[2]);
+      valores.volumeVendas.push(val[2]);
+      valores.valorMedioDoPedido.push(val[4]);
+
+      if (diaSemana === 'sáb') {
+        valores.plotBands.push({
+          from: el - 0.5,
+          to: el + 1.5,
+          color: 'rgba(192, 192, 192, .2)'
+        });
+      }
+
+    });
+
+    return valores;
+
   },
 
   /**
@@ -125,12 +149,12 @@ var Dashboard = {
    **/
   getStatement : function(statement){
     return $.post(
-      '/api/statements',
+      Api.address + '/statements',
       JSON.stringify({"statement": statement})
     )
     .fail(function(err){
       $(".alert").remove();
-      var message = getErrorMessage(err);
+      var getErrorMessagege = getErrorMessage(err);
       $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
     })
 
@@ -142,7 +166,7 @@ var Dashboard = {
     $(loader).stop().fadeToggle();
   },
 
-  loadDaterangepicker : function(){
+  initDaterangepicker : function(){
     $('#reportrange').daterangepicker(
       {
         ranges: {
@@ -153,8 +177,8 @@ var Dashboard = {
           'Este Mês': [moment().startOf('month'), moment().endOf('month')],
           'Último Mês': [moment().subtract(1,'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
-        startDate: moment().subtract(29,'days'),
-        endDate: moment(),
+        startDate: moment({year : 2013,month : 10, day : 1}),
+        endDate: moment({year : 2013,month : 10, day : 30}),
         locale: {
           applyLabel: 'Aplicar',
           cancelLabel: 'Limpar',
@@ -176,6 +200,7 @@ var Dashboard = {
           $('.data-container .data-especifica').html(start.format('D') + ' até ' + end.format('D'));
 
           $('#reportrange span.text').html(start.format('D [de] MMMM, YYYY') + ' - ' + end.format('D [de] MMMM, YYYY'));
+          Dashboard.fetchIndicadores();
       }
     );
   },
@@ -184,37 +209,55 @@ var Dashboard = {
     $(container).find('.qtd').html(qtd);
   },
 
-  init : function(){
-    Dashboard.loadDaterangepicker();
-    /* @todo setar o estado inicial do periodo */
-
-    // Dashboard.getStatement('.grafico-content', Indicadores.volumeVendasDiario(), Dashboard.renderGraph);
-
+  fetchIndicadores : function(){
+    /* Média diária de Pedidos */
     var statement = Indicadores.mediaDiariaDePedidos(22);
-    $.when(Dashboard.getStatement(statement)).done(function(data){
+    Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('.media-diaria-de-pedidos', media);
     });
 
+    /* Valor Médio do Pedido */
     statement = Indicadores.valorMedioDoPedido();
-    $.when(Dashboard.getStatement(statement)).done(function(data){
+    Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('.valor-medio-do-pedido', media);
     });
 
+    /* Média de itens do Pedido */
     statement = Indicadores.numeroPedidosPeriodo();
-    $.when(Dashboard.getStatement(statement)).done(function(data){
+    Dashboard.getStatement(statement).done(function(data){
+      var num   = data.rows[0][0] || 0;
+      if (num === 0) { Dashboard.renderIndicador('.media-itens-do-pedido', 0); return; };
+      statement = Indicadores.mediaItemsDoPedido(num);
 
-      var media = data.rows[0][0] || 0;
-      statement = Indicadores.mediaItemsDoPedido(data.num);
-      Dashboard.renderIndicador('.valor-medio-do-pedido', media);
-
+      Dashboard.getStatement(statement).done(function(data){
+        var media = data.rows[0][0] || 0;
+        Dashboard.renderIndicador('.media-itens-do-pedido', media);
+      });
     });
 
-    // Dashboard.getStatement('.valor-medio-do-pedido', Indicadores.valorMedioDoPedido(), Dashboard.renderValorMedioDoPedido);
-    // Dashboard.getStatement('.valor-medio-do-pedido', Indicadores.mediaItemsDoPedido(), Dashboard.renderMediaItemsDoPedido);
-  }
+    /* Média de itens do Pedido */
+    statement = Indicadores.volumeVendasDiario();
+    Dashboard.getStatement(statement).done(function(data){
+      Dashboard.renderGraph(data);
+    });
 
+  },
+
+  init : function(){
+    Dashboard.initDaterangepicker();
+    $('#reportrange span.text').html(moment(Indicadores.periodo.inicio).format('D [de] MMMM, YYYY') + ' - ' + moment(Indicadores.periodo.fim).format('D [de] MMMM, YYYY'));
+    Dashboard.fetchIndicadores();
+
+    /* @todo Dividir a qtd de dias pelo periodo */
+
+    // var a = moment('1800-12-29');
+    // var b = moment('2000-01-01');
+    // var days = a.diff(b, 'days');
+
+
+  }
 };
 
 $(Dashboard.init);
@@ -222,7 +265,7 @@ $(Dashboard.init);
 function getErrorMessage(xhr) {
   if (xhr.responseJSON !== undefined &&  xhr.responseJSON.errors !== undefined ) {
     return xhr.responseJSON.errors.replace(/.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,"");
-  } else if (xhr.status == 0) {
+  } else if (xhr.status === 0) {
     return "There was an unexpected error when accessing the server.";
   } else {
     return xhr.statusText;

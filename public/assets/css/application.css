@@ -31,7 +31,6 @@ pre {
 }
 
 /* Index Specifics (please let me out :S) */
-
 textarea#statement{
   -webkit-transition: height ease-in-out 0.6s;
   -o-transition: height ease-in-out  0.6s;
@@ -39,10 +38,20 @@ textarea#statement{
   height: 50px;
 }
 
-textarea#statement:focus{
-  height: 400px;
-  resize: none;
+@media(max-width: 768px){
+  textarea#statement{
+    height: 120px;
+  }
 }
+
+@media(min-width: 768px){
+
+  textarea#statement:focus{
+    height: 350px;
+    resize: none;
+  }
+}
+
 
 /* Dashboard */
 
@@ -64,7 +73,7 @@ textarea#statement:focus{
   position: relative;
 }
 
-.grafico-content .loader{
+.loader{
   position: absolute;
   height: 100%;
   width: 100%;
@@ -72,11 +81,11 @@ textarea#statement:focus{
   display: none;
 }
 
-.grafico-content .loader.visible{
+.loader.visible{
   display: block;
 }
 
-.grafico-content .loader p{
+.loader p{
   font-family: "Helvetica";
   font-size: 120%;
   color: #333;

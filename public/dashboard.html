@@ -2,6 +2,8 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
   <title>Atlas Middleware</title>
   <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css">
@@ -28,24 +30,35 @@
   <div class="container">
 
     <div class="page-header">
-      <h1>
-        Painel de vendas
-        <small>Acompanhe suas vendas :)</small>
-      </h1>
+      <div class="row">
+
+        <div class="col-sm-8">
+          <h1>
+            Painel de vendas
+            <small>Acompanhe suas vendas :)</small>
+          </h1>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="settings-area pull-right">
+            <button class="btn btn-sm"><span class="glyphicon glyphicon-cog"></span></button>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
     <div class="row">
       <div class="col-sm-12">
         <div class="well data-container">
 
-          <div id="reportrange" class="pull-right btn btn-primary btn-sm">
+          <div id="reportrange" class="btn btn-primary btn-sm">
               <span class="glyphicon glyphicon-calendar"></span>
               <span class="text"></span>
           </div>
 
-          <span class="data-atual">Novembro/2014</span>
-          <span class="data-especifica">dia 1º até hoje</span>
-
+          <div class="clearfix"></div>
 
         </div>
       </div>
@@ -55,59 +68,55 @@
       <div class="row">
 
         <div class="col-sm-4 media-diaria-de-pedidos">
-          <h3>
+          <h4>
             Média diária de pedidos
             <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h3>
+          </h4>
           <div class="well">
             <div class="info">
               <span class="qtd"></span>
               Pedidos
             </div>
           </div>
+          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
 
         <div class="col-sm-4 valor-medio-do-pedido">
-          <h3>
+          <h4>
             Valor médio do pedido
             <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h3>
+          </h4>
           <div class="well">
             <div class="info">
               R$ <span class="qtd">165,00</span>
             </div>
           </div>
+          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
-        <div class="col-sm-4">
-          <h3>
+
+        <div class="col-sm-4 media-itens-do-pedido">
+          <h4>
             Média de itens do pedido
             <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h3>
+          </h4>
           <div class="well">
-            <div class="info">6 Itens</div>
+            <div class="info">
+              <span class="qtd"></span>
+              Itens
+            </div>
           </div>
+          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
+
       </div>
     </section>
 
     <section>
       <div class="row">
         <div class="col-sm-12">
-          <div class="grafico-cabecalho">
-            <div class="row">
-              <div class="col-sm-6">
-                <h3>Volume de vendas diário</h3>
-              </div>
-              <div class="col-sm-6">
-                <button class="pull-right btn btn-primary btn-sm" data-behaivor="carregar-dados">
-                    <span class="glyphicon glyphicon-refresh"></span>
-                </button>
-              </div>
-            </div>
-          </div>
           <div class="grafico-content">
             <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
-            <canvas id="volume-vendas" width="100%" height="400"></canvas>
+            <div id="volume-vendas" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
           </div>
         </div>
       </div>
@@ -119,7 +128,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
-  <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
   <script src="/assets/scripts/dashboard.js"></script>
