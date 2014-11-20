@@ -1,5 +1,6 @@
-$('[data-behavior~=execute-sql]').on('click', function() {
+$('[data-behavior~=execute-sql]').on('submit', function() {
   $('[data-behavior~=execute-sql]').button("loading");
+  // $('input[type="submit"]').button("loading");
   var statement = $('textarea#statement').val();
   reset(statement);
   $.post(
@@ -10,16 +11,17 @@ $('[data-behavior~=execute-sql]').on('click', function() {
       "offset": 0
     }), function(data) {
       createHeader(data);
+      createBody();
       appendResults(data);
       $('[data-behavior~=execute-sql]').button("reset");
       $("#results-area").removeClass("hidden");
       $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
-    }
-  ).fail( function(xhr, textStatus, errorThrown) {
-    var message = getErrorMessage(xhr);
-    $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
-    $('[data-behavior~=execute-sql]').button("reset");
+  }).fail(function(xhr, status, error) {
+    fail(xhr, status, error, function() {
+      $('[data-behavior~=execute-sql]').button("reset");
+    });
   });
+  return false;
 });
 
 $('[data-behavior~=see-more]').on('click', function() {
@@ -37,13 +39,18 @@ $('[data-behavior~=see-more]').on('click', function() {
       appendResults(data);
       $('[data-behavior~=see-more]').button("reset");
       $('[data-behavior~=see-more]').data("currentPage",page+1);
-    }
-  ).fail( function(xhr, textStatus, errorThrown) {
-    var message = getErrorMessage(xhr);
-    $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
-    $('[data-behavior~=see-more]').button("reset");
+  }).fail( function(xhr, status, error) {
+    fail(xhr, status, error, function() {
+      $('[data-behavior~=see-more]').button("reset");
+    });
   });
 });
+
+function fail(xhr, textStatus, errorThrown, callback) {
+  var message = getErrorMessage(xhr);
+  $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+  callback.call();
+}
 
 function reset(statement) {
   $(".alert").remove();
@@ -51,7 +58,6 @@ function reset(statement) {
   $("#results-area h2 small").remove();
   $('[data-behavior~=see-more]').data("currentPage",0);
   $("#sql code").empty().text(statement.toUpperCase());
-
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
   });
@@ -61,8 +67,7 @@ function reset(statement) {
 
 function getErrorMessage(xhr) {
   if (xhr.responseJSON !== undefined &&  xhr.responseJSON.errors !== undefined ) {
-    // return xhr.responseJSON.errors.replace(/.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,"");
-    return xhr.responseJSON.errors;
+    return getFriendlyMessage(xhr.responseJSON.errors);
   } else if (xhr.status == 0) {
     return "There was an unexpected error when accessing the server.";
   } else {
@@ -70,24 +75,28 @@ function getErrorMessage(xhr) {
   }
 }
 
+function getFriendlyMessage(message) {
+  return message.replace(
+    /.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,""
+  );
+}
+
 function createHeader(data) {
-  var _tr;
-  $("#results table").append($("<thead>")).append($("<tr>"));
-  _tr = $("#results table thead tr:last");
+  $("#results table").append($("<thead>").html($("<tr>")));
   $.each(data.columns,function() {
-    _tr.append($("<th>").text(this.name));
+    $("#results table thead tr").append($("<th>").text(this.name));
   });
 }
 
-function appendResults(data) {
-  var _tbody;
-  
+function createBody() {
   $("#results table").append($("<tbody>"));
-  _tbody = $("#results table tbody");
+}
+
+function appendResults(data) {
   $.each(data.rows,function() {
-    _tbody.append($("<tr>"));
+    $("#results table tbody").append($("<tr>"));
     $.each(this,function(index,column) {
-      _tbody.find("tr:last").append($("<td nowrap>").text(column));
+      $("#results table tbody tr:last").append($("<td nowrap>").text(column));
     });
   });
 }
