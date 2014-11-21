@@ -34,84 +34,86 @@
       <div class="row">
         <div class="col-sm-8">
           <h1>
-            Painel de vendas
+            Painel de Vendas
             <small>Acompanhe suas vendas :)</small>
           </h1>
         </div>
-        <div class="col-sm-4">
+        <!-- <div class="col-sm-4">
           <div class="settings-area pull-right">
             <button class="btn btn-sm"><span class="glyphicon glyphicon-cog"></span></button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
     <div class="row">
       <div class="col-sm-12">
         <div class="data-container">
-          <div id="reportrange" class="btn btn-primary btn-block" style="margin-bottom: 21px;">
-              <span class="glyphicon glyphicon-calendar"></span>
+          <button id="reportrange" class="btn btn-primary btn-block">
+              <span class="fa fa-calendar"></span>
               <span class="text"></span>
-          </div>
+          </button>
         </div>
       </div>
     </div>
 
     <section class="meta-container">
-      
-      <div class="row">      
-        <div class="col-sm-3 volume-vendas-total">
-          <div class="alert alert-success">
-            <h4 style="opacity:0.9;">
+
+      <div class="row">
+        <div class="col-sm-6 col-xs-12 col-md-3">
+          <div class="indicador alert alert-success" data-behaivor="indicador" data-type="volume-total-de-vendas">
+            <h4 class="title">
               Volume de Vendas
-              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
+              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
             </h4>
             <div class="info">
-              R$ <span class="qtd"></span>
+              <span class="unidade">R$ </span>
+              <span class="valor"></span>
+              <span class="grandeza"></span>
             </div>
           </div>
-          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
 
-        <div class="col-sm-3 valor-medio-do-pedido">
-          <div class="alert alert-info">
-            <h4 style="opacity:0.9;">
-              Pedido Médio
-              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
-            </h4>
-            <div class="info">
-              R$ <span class="qtd"></span>
-            </div>
-          </div>
-          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
-        </div>
-
-        <div class="col-sm-3 media-diaria-de-pedidos">
-          <div class="alert alert-info">
-            <h4 style="opacity:0.9;">
+        <div class="col-sm-6 col-xs-12 col-md-3">
+          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="valor-medio-do-pedido">
+            <h4 class="title">
               Média Diária
-              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
+              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
             </h4>
             <div class="info">
-              <span class="qtd"></span>
-              Pedidos
+              <span class="unidade">R$ </span>
+              <span class="valor"></span>
+              <span class="grandeza"></span>
             </div>
           </div>
-          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
 
-        <div class="col-sm-3 media-itens-do-pedido">
-          <div class="alert alert-info">
-            <h4 style="opacity:0.9;">
-              Média de itens
-              <small><span style="opacity:0.56;color:white"  class="pull-right glyphicon glyphicon-question-sign"></span></small>
+        <div class="col-sm-6 col-xs-12 col-md-3">
+          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="media-diaria-de-pedidos">
+            <h4 class="title">
+              Média Diária
+              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
             </h4>
             <div class="info">
-              <span class="qtd"></span>
-              Itens
+              <span class="valor"></span>
+              <span class="grandeza"></span>
+              <span class="unidade"> pedidos</span>
             </div>
           </div>
-          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
+        </div>
+
+        <div class="col-sm-6 col-xs-12 col-md-3">
+          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="media-itens-do-pedido">
+            <h4 class="title">
+              Média de itens
+              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+            </h4>
+            <div class="info">
+              <span class="valor"></span>
+              <span class="grandeza"></span>
+              <span class="unidade"> itens</span>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -137,6 +139,7 @@
   <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+  <script src="/assets/scripts/helpers/number_helpers.js"></script>
   <script src="/assets/scripts/dashboard.js"></script>
 
 </body>

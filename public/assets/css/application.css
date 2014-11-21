@@ -55,13 +55,14 @@ textarea#statement{
 
 /* Dashboard */
 
-.data-container .data-atual{
-  font-weight: bold;
-  font-size:120%;
+.data-container button{
+  margin-bottom: 21px;
+  text-align: left;
 }
 
-.data-container .data-especifica{
-  color: #333;
+.data-container button .text{
+  margin-left: 10px;
+  display: inline-block;
 }
 
 .grafico-cabecalho{
@@ -95,5 +96,27 @@ textarea#statement{
 .meta-container .info{
   font-size: 36px;
   text-align: right;
+}
+
+.indicador .title span{
+  opacity:0.5;
+  color:#FFF;
+}
+
+.indicador .title span:hover{
+  opacity: 1;
+  cursor: pointer;
+}
+.indicador .valor{
+  font-weight: bold;
+}
+
+.indicador .unidade,
+.indicador .grandeza{
+  opacity: 0.8;
+}
+
+.alert.alert-default{
+  border: 1px solid;
 }
 

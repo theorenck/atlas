@@ -4,12 +4,12 @@ var Api = { address : "http://localhost:4567/api" };
 var Indicadores = {
 
   periodo : {
-    inicio    : (moment({ day: 1, month : 10 , year : 2013 }).format("YYYY-MM-DD 00:00:00")),
-    fim       : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00")),
+    inicio    : (moment().subtract(29,'days').format("YYYY-MM-DD 00:00:00")),
+    fim       : (moment().format("YYYY-MM-DD 00:00:00")),
     duracao : function(grandeza) {
-      var grandeza = grandeza || 'days';
-      var fim = moment(Indicadores.periodo.fim);
-      var inicio = moment(Indicadores.periodo.inicio);
+      var grandeza  = grandeza || 'days';
+      var fim       = moment(Indicadores.periodo.fim);
+      var inicio    = moment(Indicadores.periodo.inicio);
       var diferenca = fim.diff(inicio,grandeza);
       return diferenca+1;
     }
@@ -51,13 +51,35 @@ var Dashboard = {
       return;
     }
 
-    console.log(data.columns);
-
-    var valores = Dashboard.prepareDataset(data.rows);
+    var valores    = Dashboard.prepareDataset(data.rows);
+    valores.labels = valores.labels.length > 31 ? false : valores.labels;
 
     $('#volume-vendas').highcharts({
       chart: {
-        type: 'areaspline'
+        type: 'areaspline',
+        zoomType : 'x',
+        panning: true,
+        panKey: 'shift',
+        resetZoomButton: {
+          theme: {
+            fill: '#2c3e50',
+            stroke: '#2c3e50',
+            style: {
+              color: 'white',
+            },
+            r: 3,
+            states: {
+              hover: {
+                fill: '#1a242f',
+                stroke: '#2c3e50',
+                style: {
+                  color: 'white',
+                  cursor: "pointer"
+                }
+              }
+            }
+          }
+        }
       },
       title : {
         text : "<h3>Volume de vendas diário</h3>",
@@ -79,7 +101,8 @@ var Dashboard = {
       },
       xAxis: {
           categories: valores.labels,
-          plotBands: valores.plotBands
+          plotBands: valores.plotBands,
+          labels : { maxStaggerLines : 1 }
       },
       yAxis: {
           title: {
@@ -104,14 +127,10 @@ var Dashboard = {
       ]
     });
 
-  console.log(valores);
-
   },
 
   prepareDataset : function(rows){
     var dataSet   = [];
-
-    console.log(rows);
 
     var dataAtual = moment(Indicadores.periodo.inicio).format("YYYY-MM-DD");
     var dataFinal = moment(Indicadores.periodo.fim).format("YYYY-MM-DD");
@@ -186,6 +205,7 @@ var Dashboard = {
           'Ontem': [moment().subtract(1,'days'), moment().subtract(1,'days')],
           'Últimos 7 Dias': [moment().subtract(6,'days'), moment()],
           'Últimos 30 Dias': [moment().subtract(29,'days'), moment()],
+          'Últimos 90 Dias': [moment().subtract(89,'days'), moment()],
           'Este Mês': [moment().startOf('month'), moment().endOf('month')],
           'Último Mês': [moment().subtract(1,'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
@@ -201,24 +221,48 @@ var Dashboard = {
           monthNames: ['Janeiro', 'Favereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
         }
       },
-      function(start, end) {
+      function(start, end, range) {
+          var text;
+          if (range !== undefined && range !== "Personalizado") {
+            text = range;
+          }else{
+            var formato = "D [de] MMMM";
+            if (start.format('YYYY') === end.format('YYYY')) {
+              if (start.format('MMMM') === end.format('MMMM')) {
+                formato = 'D';
+              };
+            }else{
+              formato = 'D [de] MMMM, YYYY';
+            }
+            text = start.format(formato) + '  até  ' + end.format('D [de] MMMM, YYYY');
+          }
 
-          Indicadores.periodo = {
-            inicio : start.format("YYYY-MM-DD 00:00:00"),
-            fim    : end.format("YYYY-MM-DD 00:00:00"),
-          };
+          $('#reportrange span.text').html(text);
 
-          $('.data-container .data-atual').html(start.format('MMMM/YYYY'));
-          $('.data-container .data-especifica').html(start.format('D') + ' até ' + end.format('D'));
+          Indicadores.periodo.inicio = start.format("YYYY-MM-DD 00:00:00");
+          Indicadores.periodo.fim    = end.format("YYYY-MM-DD 00:00:00");
 
-          $('#reportrange span.text').html(start.format('D [de] MMMM, YYYY') + ' - ' + end.format('D [de] MMMM, YYYY'));
           Dashboard.fetchIndicadores();
       }
     );
   },
 
   renderIndicador : function(container, qtd){
-    $(container).find('.qtd').html(qtd);
+    var qtd = NumberHelpers.number_to_human(qtd, {
+        labels : { thousand : 'mil', million : 'Mi', billion : 'Bi', trillion : 'Tri' },
+        precision: 3,
+        significant : true,
+        separator : ",",
+        delimiter : '.'
+    });
+
+
+    valores = qtd.split(' ');
+
+    if (valores.length > 1)
+      $(container).find('.grandeza').html(valores[1]);
+
+    $(container).find('.valor').html(valores[0]);
   },
 
   fetchIndicadores : function(){
@@ -227,33 +271,33 @@ var Dashboard = {
     var statement = Indicadores.volumeVendasTotal();
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
-      Dashboard.renderIndicador('.volume-vendas-total', media);
+      Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', media);
     });
 
     /* Média diária de Pedidos */
     var statement = Indicadores.mediaDiariaDePedidos();
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
-      Dashboard.renderIndicador('.media-diaria-de-pedidos', media);
+      Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
     });
 
     /* Valor Médio do Pedido */
     statement = Indicadores.valorMedioDoPedido();
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
-      Dashboard.renderIndicador('.valor-medio-do-pedido', media);
+      Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
     });
 
     /* Média de itens do Pedido */
     statement = Indicadores.numeroPedidosPeriodo();
     Dashboard.getStatement(statement).done(function(data){
       var num   = data.rows[0][0] || 0;
-      if (num === 0) { Dashboard.renderIndicador('.media-itens-do-pedido', 0); return; };
+      if (num === 0) { Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0); return; };
       statement = Indicadores.mediaItemsDoPedido(num);
 
       Dashboard.getStatement(statement).done(function(data){
         var media = data.rows[0][0] || 0;
-        Dashboard.renderIndicador('.media-itens-do-pedido', media);
+        Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', media);
       });
     });
 
@@ -267,7 +311,7 @@ var Dashboard = {
 
   init : function(){
     Dashboard.initDaterangepicker();
-    $('#reportrange span.text').html(moment(Indicadores.periodo.inicio).format('D [de] MMMM, YYYY') + ' - ' + moment(Indicadores.periodo.fim).format('D [de] MMMM, YYYY'));
+    $('#reportrange span.text').html('Últimos 30 dias');
     Dashboard.fetchIndicadores();
 
     /* @todo Dividir a qtd de dias pelo periodo */
