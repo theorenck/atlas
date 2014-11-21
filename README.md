@@ -9,6 +9,7 @@ Atlas Middleware
 - [Highcharts.js](http://code.highcharts.com/highcharts.js)
 - [jQuery](http://jquery.com/)
 - [Bootstrap](http://getbootstrap.com/javascript/)
+- [NumberHelpers](http://emcien.github.io/number-helpers-coffeescript/)
 
 
 **Diferença de datas Clarion**

@@ -118,12 +118,15 @@ function appendResults(data) {
 $(function(){
 
   $(document).scroll(function(){
-    var docHeight  = $(document).height();
-    var scrollTop  = $(document).scrollTop();
-    // var percentTop =
+    var alturaDocumento= $(document).height();
+    var alturaScrol    = $(document).scrollTop();
+    var percentualTopo = alturaDocumento * 0.6;
 
-    // if()
+    var qtdRegistrosCarregados   = 0;
 
+    if(alturaScrol > percentualTopo){
+      $('[data-behavior="see-more"]').click();
+    }
   });
 
 });
