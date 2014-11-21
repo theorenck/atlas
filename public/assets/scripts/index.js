@@ -16,6 +16,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       appendResults(data);
       _submit.button("reset");
       $("#results-area").removeClass("hidden");
+      $("#query-area").addClass("hidden");
       $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
   }).fail(function(xhr, status, error) {
     fail(xhr, status, error, function() {
@@ -45,6 +46,12 @@ $('[data-behavior~=see-more]').on('click', function() {
       $('[data-behavior~=see-more]').button("reset");
     });
   });
+});
+
+
+$('[data-behavior~=edit-sql]').on('click', function(){
+  $("#results-area").toggleClass("hidden");
+  $("#query-area").toggleClass("hidden");
 });
 
 function fail(xhr, textStatus, errorThrown, callback) {

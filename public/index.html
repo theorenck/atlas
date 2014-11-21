@@ -26,34 +26,38 @@
     </div>
   </div>
   <div class="container">
-    <h2>Consulta</h2>
-    <div class="well">
-      <form data-behavior="execute-sql">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label class="control-label">SQL</label>
-              <textarea id="statement" class="form-control" rows="4">SELECT codproduto, codbarras, descricao1 FROM zw14ppro</textarea>
+
+    <div id="query-area">
+      <h2>Consulta</h2>
+      <div class="well">
+        <form data-behavior="execute-sql">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label class="control-label">SQL</label>
+                <textarea id="statement" class="form-control" rows="4">SELECT codproduto, codbarras, descricao1 FROM zw14ppro</textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-2">
-            <div class="form-group">
-              <label class="control-label">Limite</label>
-              <input type="text" id="limit" class="form-control" value="100"/>
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label class="control-label">Limite</label>
+                <input type="text" id="limit" class="form-control" value="100"/>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div>
-              <button type="submit" data-loading-text="Carregando..." class="btn btn-success btn-block" style="width:100%">Executar SQL</button>
+          <div class="row">
+            <div class="col-md-12">
+              <div>
+                <button type="submit" data-loading-text="Carregando..." class="btn btn-success btn-block" style="width:100%">Executar SQL</button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
+
     <div  id="results-area" class="hidden">
       <h2>Resultados</h2>
       <div class="well">
@@ -67,7 +71,7 @@
         <div class="row">
           <div class="col-md-12">
             <div>
-              <button type="button" data-loading-text="Carregando..." data-behavior="edit-sql" class="btn btn-default btn-block">Editar SQL</button>
+              <button type="button" data-behavior="edit-sql" class="btn btn-default btn-block">Editar SQL</button>
             </div>
           </div>
         </div>
