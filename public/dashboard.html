@@ -8,6 +8,7 @@
   <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css">
   <link href="/assets/css/application.css" rel="stylesheet">
+  <link href="/assets/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -31,48 +32,66 @@
 
     <div class="page-header">
       <div class="row">
-
         <div class="col-sm-8">
           <h1>
             Painel de vendas
             <small>Acompanhe suas vendas :)</small>
           </h1>
         </div>
-
         <div class="col-sm-4">
           <div class="settings-area pull-right">
             <button class="btn btn-sm"><span class="glyphicon glyphicon-cog"></span></button>
           </div>
         </div>
-
       </div>
-
     </div>
 
     <div class="row">
       <div class="col-sm-12">
-        <div class="well data-container">
-
-          <div id="reportrange" class="btn btn-primary btn-sm">
+        <div class="data-container">
+          <div id="reportrange" class="btn btn-primary btn-block" style="margin-bottom: 21px;">
               <span class="glyphicon glyphicon-calendar"></span>
               <span class="text"></span>
           </div>
-
-          <div class="clearfix"></div>
-
         </div>
       </div>
     </div>
 
     <section class="meta-container">
-      <div class="row">
+      
+      <div class="row">      
+        <div class="col-sm-3 volume-vendas-total">
+          <div class="alert alert-success">
+            <h4 style="opacity:0.9;">
+              Volume de Vendas
+              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
+            </h4>
+            <div class="info">
+              R$ <span class="qtd"></span>
+            </div>
+          </div>
+          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
+        </div>
 
-        <div class="col-sm-4 media-diaria-de-pedidos">
-          <h4>
-            Média diária de pedidos
-            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h4>
-          <div class="well">
+        <div class="col-sm-3 valor-medio-do-pedido">
+          <div class="alert alert-info">
+            <h4 style="opacity:0.9;">
+              Pedido Médio
+              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
+            </h4>
+            <div class="info">
+              R$ <span class="qtd"></span>
+            </div>
+          </div>
+          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
+        </div>
+
+        <div class="col-sm-3 media-diaria-de-pedidos">
+          <div class="alert alert-info">
+            <h4 style="opacity:0.9;">
+              Média Diária
+              <small><span style="opacity:0.56;color:white" class="pull-right glyphicon glyphicon-question-sign"></span></small>
+            </h4>
             <div class="info">
               <span class="qtd"></span>
               Pedidos
@@ -81,25 +100,12 @@
           <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
         </div>
 
-        <div class="col-sm-4 valor-medio-do-pedido">
-          <h4>
-            Valor médio do pedido
-            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h4>
-          <div class="well">
-            <div class="info">
-              R$ <span class="qtd">165,00</span>
-            </div>
-          </div>
-          <div class="loader"><p class="text-center">Estamos buscando os dados :)</p></div>
-        </div>
-
-        <div class="col-sm-4 media-itens-do-pedido">
-          <h4>
-            Média de itens do pedido
-            <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-          </h4>
-          <div class="well">
+        <div class="col-sm-3 media-itens-do-pedido">
+          <div class="alert alert-info">
+            <h4 style="opacity:0.9;">
+              Média de itens
+              <small><span style="opacity:0.56;color:white"  class="pull-right glyphicon glyphicon-question-sign"></span></small>
+            </h4>
             <div class="info">
               <span class="qtd"></span>
               Itens

@@ -4,8 +4,19 @@ var Api = { address : "http://localhost:4567/api" };
 var Indicadores = {
 
   periodo : {
-    inicio : (moment({ day: 1, month : 10 , year : 2013 }).format("YYYY-MM-DD 00:00:00")),
-    fim    : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00"))
+    inicio    : (moment({ day: 1, month : 10 , year : 2013 }).format("YYYY-MM-DD 00:00:00")),
+    fim       : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00")),
+    duracao : function(grandeza) {
+      var grandeza = grandeza || 'days';
+      var fim = moment(Indicadores.periodo.fim);
+      var inicio = moment(Indicadores.periodo.inicio);
+      var diferenca = fim.diff(inicio,grandeza);
+      return diferenca+1;
+    }
+  },
+
+  volumeVendasTotal : function(){
+    return "SELECT {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\" FROM zw14vped p WHERE p.situacao = 'Finalizado'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   volumeVendasDiario : function(){
@@ -16,8 +27,8 @@ var Indicadores = {
     return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
-  mediaDiariaDePedidos : function(qtdDias){
-    return "SELECT COUNT(p.numeropedido)/" + qtdDias + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
+  mediaDiariaDePedidos : function(){
+    return "SELECT COUNT(p.numeropedido)/" + Indicadores.periodo.duracao() + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = 'Finalizado' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
   numeroPedidosPeriodo : function(){
@@ -107,6 +118,7 @@ var Dashboard = {
 
     var valores   = {
       valorMedioDoPedido : [],
+      volumeVendasTotal : [],
       volumeVendas : [],
       labels : [],
       plotBands : []
@@ -153,9 +165,9 @@ var Dashboard = {
       JSON.stringify({"statement": statement})
     )
     .fail(function(err){
-      $(".alert").remove();
+      $(".container > .alert").remove();
       var getErrorMessagege = getErrorMessage(err);
-      $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+      $(".container").prepend('<div data- class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
     })
 
   },
@@ -210,8 +222,16 @@ var Dashboard = {
   },
 
   fetchIndicadores : function(){
+
+    /* Volume de Vendas Total */
+    var statement = Indicadores.volumeVendasTotal();
+    Dashboard.getStatement(statement).done(function(data){
+      var media = data.rows[0][0] || 0;
+      Dashboard.renderIndicador('.volume-vendas-total', media);
+    });
+
     /* Média diária de Pedidos */
-    var statement = Indicadores.mediaDiariaDePedidos(22);
+    var statement = Indicadores.mediaDiariaDePedidos();
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('.media-diaria-de-pedidos', media);
