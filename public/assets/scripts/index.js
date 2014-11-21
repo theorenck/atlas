@@ -1,7 +1,8 @@
 var API = { address : "http://localhost:4567/api" };
 
 $('[data-behavior~=execute-sql]').on('submit', function() {
-  var _submit = $(this).find('button[type="submit"]')
+  Index.editor.save();
+  var _submit = $(this).find('button[type="submit"]');
   var statement = $('textarea#statement').val();
   _submit.button("loading");
   reset(statement);
@@ -121,19 +122,42 @@ function appendResults(data) {
   $(_tbody).append(template);
 }
 
-
-$(function(){
-
-  $(document).scroll(function(){
-    var alturaDocumento= $(document).height();
-    var alturaScrol    = $(document).scrollTop();
-    var percentualTopo = alturaDocumento * 0.6;
-
-    var qtdRegistrosCarregados   = 0;
-
-    if(alturaScrol > percentualTopo){
-      $('[data-behavior="see-more"]').click();
-    }
+function prepareSyntaxHighlight(){
+  return CodeMirror.fromTextArea(document.getElementById("statement"), {
+    lineNumbers: false,
+    styleActiveLine: false,
+    matchBrackets: true,
+    mode : 'text/x-sql',
+    viewportMargin: Infinity
   });
+}
 
-});
+var Index = {
+
+  editor : [],
+
+  init : function(){
+    Index.editor = prepareSyntaxHighlight();
+  }
+
+
+};
+$(Index.init)
+
+
+
+// $(function(){
+
+  // $(document).scroll(function(){
+  //   var alturaDocumento= $(document).height();
+  //   var alturaScrol    = $(document).scrollTop();
+  //   var percentualTopo = alturaDocumento * 0.6;
+
+  //   var qtdRegistrosCarregados   = 0;
+
+  //   if(alturaScrol > percentualTopo){
+  //     $('[data-behavior="see-more"]').click();
+  //   }
+  // });
+
+// });

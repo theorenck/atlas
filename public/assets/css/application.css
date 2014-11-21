@@ -18,16 +18,36 @@ pre {
   padding: 0px;
 }
 
-.hljs-keyword {
+.hljs-keyword,
+.cm-s-default .cm-keyword {
   color:#f39c12;
+  font-weight: bold;
 }
 
-.hljs-literal, .hljs-number {
+.hljs-literal, .hljs-number,
+.cm-s-default .cm-number {
   color: #18BC9D;
 }
 
-.hljs-string {
+.hljs-string,
+.cm-s-default .cm-string {
   color:#3498db;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  min-height: 50px;
+  height: auto;
+}
+.CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.CodeMirror pre{
+  font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 /* Index Specifics (please let me out :S) */

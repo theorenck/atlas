@@ -10,7 +10,7 @@ Atlas Middleware
 - [jQuery](http://jquery.com/)
 - [Bootstrap](http://getbootstrap.com/javascript/)
 - [NumberHelpers](http://emcien.github.io/number-helpers-coffeescript/)
-
+- [CodeMirror](http://codemirror.net/)
 
 **Diferença de datas Clarion**
 <pre>var a = moment('1800-12-28');

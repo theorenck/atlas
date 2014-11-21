@@ -143,7 +143,7 @@ var Dashboard = {
       ];
     }
     else if (el === '#pie2') {
-      title = 'Volumede vendas por Cliente';
+      title = 'Volume de vendas por Cliente';
       serie = 'Quantidade';
       data = [
           ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
@@ -154,7 +154,7 @@ var Dashboard = {
       ];
     }
     else {
-      title = 'Volumede vendas por Vendedor';
+      title = 'Volume de vendas por Vendedor';
       serie = 'Quantidade';
       data = [
           ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
