@@ -35,10 +35,20 @@ pre {
 }
 
 .CodeMirror {
-  border: 1px solid #eee;
+  border: 2px solid #dce4ec;
+  border-radius: 4px;
+  padding: 10px 15px;
   min-height: 50px;
   height: auto;
+  -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;;
+  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;;
 }
+
+.CodeMirror.CodeMirror-focused{
+  border-color: #2c3e50;
+}
+
 .CodeMirror-scroll {
   overflow-y: hidden;
   overflow-x: auto;
