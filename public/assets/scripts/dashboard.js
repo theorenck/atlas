@@ -67,7 +67,7 @@ var Dashboard = {
             style: {
               color: 'white',
             },
-            r: 3,
+            r: 0,
             states: {
               hover: {
                 fill: '#1a242f',
@@ -82,7 +82,8 @@ var Dashboard = {
         }
       },
       title : {
-        text : "<h3>Volume de vendas diário</h3>",
+        // text : "<h3>Volume de vendas diário</h3>",
+        text : false,
         useHtml : true,
         style : {
           fontFamily : "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -279,6 +280,8 @@ var Dashboard = {
           'Este Mês': [moment().startOf('month'), moment().endOf('month')],
           'Último Mês': [moment().subtract(1,'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
+        format : 'DD/MM/YYYY',
+        showDropdowns : true,
         startDate: moment({year : 2013,month : 10, day : 1}),
         endDate: moment({year : 2013,month : 10, day : 30}),
         locale: {
