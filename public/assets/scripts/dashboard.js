@@ -4,8 +4,8 @@ var Api = { address : "http://localhost:4567/api" };
 var Indicadores = {
 
   periodo : {
-    inicio    : (moment().subtract(29,'days').format("YYYY-MM-DD 00:00:00")),
-    fim       : (moment().format("YYYY-MM-DD 00:00:00")),
+    inicio    : (moment({ day: 30, month : 10, year : 2013 }).subtract(29,'days').format("YYYY-MM-DD 00:00:00")),
+    fim       : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00")),
     duracao : function(grandeza) {
       var grandeza  = grandeza || 'days';
       var fim       = moment(Indicadores.periodo.fim);
@@ -127,6 +127,76 @@ var Dashboard = {
       ]
     });
 
+  },
+
+  renderPie1 : function(el){
+
+    if (el === '#pie1') {
+      title = 'Quantidade Vendas Produto (%)';
+      serie = 'Quantidade';
+      data = [
+          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
+          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
+          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
+          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
+          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
+      ];
+    }
+    else if (el === '#pie2') {
+      title = 'Volumede vendas por Cliente';
+      serie = 'Quantidade';
+      data = [
+          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
+          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
+          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
+          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
+          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
+      ];
+    }
+    else {
+      title = 'Volumede vendas por Vendedor';
+      serie = 'Quantidade';
+      data = [
+          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
+          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
+          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
+          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
+          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
+      ];
+    }
+
+    $(el).highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        credits: {
+          enabled: false
+        },
+        legend: false,
+        title: {
+            text: title
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+               dataLabels: {
+                   enabled: false
+               },
+                showInLegend: true
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: serie,
+            data: data
+        }]
+    });
   },
 
   prepareDataset : function(rows){
@@ -313,6 +383,9 @@ var Dashboard = {
     Dashboard.initDaterangepicker();
     $('#reportrange span.text').html('Últimos 30 dias');
     Dashboard.fetchIndicadores();
+    Dashboard.renderPie1('#pie1');
+    Dashboard.renderPie1('#pie2');
+    Dashboard.renderPie1('#pie3');
 
     /* @todo Dividir a qtd de dias pelo periodo */
 
