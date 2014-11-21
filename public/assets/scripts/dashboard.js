@@ -55,6 +55,7 @@ var Dashboard = {
     valores.labels = valores.labels.length > 31 ? false : valores.labels;
 
     $('#volume-vendas').highcharts({
+      colors : ['#3498db'],
       chart: {
         type: 'areaspline',
         zoomType : 'x',
