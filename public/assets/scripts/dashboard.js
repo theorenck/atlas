@@ -7,7 +7,7 @@ var Api = { address : "http://localhost:4567/api" };
 
 var Indicadores = {
 
-  situacao : "Finalizado",
+  situacao : "LOC Finalizado",
 
   items : {
     "volumeVendasTotal" : false
@@ -444,7 +444,7 @@ var Dashboard = {
         dataset.push([ "OUTROS", 100 - total ]);
 
         Dashboard.loader('[data-type=clientes-mais-compraram]');
-        Dashboard.renderPie('[data-type=clientes-mais-compraram] .pie', dataset, colors, '<h3>Clientes que mais venderam (%)</h3>');
+        Dashboard.renderPie('[data-type=clientes-mais-compraram] .pie', dataset, colors, '<h3>Clientes que mais compraram (%)</h3>');
       });
     }
 
