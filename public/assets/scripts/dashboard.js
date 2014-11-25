@@ -393,43 +393,58 @@ var Dashboard = {
 
     /* Volume de Vendas Total */
     var statement = Indicadores.volumeVendasTotal();
+    Dashboard.loader("[data-type=volume-total-de-vendas]");
     Dashboard.getStatement(statement).done(function(data){
       var valor = data.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
       Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', valor);
+      Dashboard.loader("[data-type=volume-total-de-vendas]");
     });
 
     /* Média diária de Pedidos */
     statement = Indicadores.mediaDiariaDePedidos();
+    Dashboard.loader("[data-type=media-diaria-de-pedidos]");
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
+      Dashboard.loader("[data-type=media-diaria-de-pedidos]");
     });
 
     /* Valor Médio do Pedido */
     statement = Indicadores.valorMedioDoPedido();
+    Dashboard.loader("[data-type=valor-medio-do-pedido]");
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
+      Dashboard.loader("[data-type=valor-medio-do-pedido]");
     });
 
     /* Média de itens do Pedido */
     statement = Indicadores.numeroPedidosPeriodo();
+    Dashboard.loader("[data-type=media-itens-do-pedido]");
     Dashboard.getStatement(statement).done(function(data){
       var num   = data.rows[0][0] || 0;
-      if (num === 0) { Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0); return; };
+      if (num === 0) {
+        Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0);
+        Dashboard.loader("[data-type=media-itens-do-pedido]");
+        return;
+      }
+
       statement = Indicadores.mediaItemsDoPedido(num);
 
       Dashboard.getStatement(statement).done(function(data){
         var media = data.rows[0][0] || 0;
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', media);
+        Dashboard.loader("[data-type=media-itens-do-pedido]");
       });
     });
 
     /* Média de itens do Pedido */
+    Dashboard.loader(".grafico-content");
     statement = Indicadores.volumeVendasDiario();
     Dashboard.getStatement(statement).done(function(data){
       Dashboard.renderGraph(data);
+      Dashboard.loader(".grafico-content");
     });
 
     /* Produtos mais vendidos */

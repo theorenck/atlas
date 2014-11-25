@@ -108,8 +108,13 @@ textarea#statement{
   position: absolute;
   height: 100%;
   width: 100%;
-  background: rgba(236, 240, 241, 0.6);
   display: none;
+  color: #FFF;
+  left: 0px;
+  top: 0px;
+  background-color: inherit;
+  background: rgba(236, 240, 241, 0.6);
+  z-index: 10;
 }
 
 .loader.visible{
@@ -126,6 +131,10 @@ textarea#statement{
 .meta-container .info{
   font-size: 36px;
   text-align: right;
+}
+
+.indicador{
+  position: relative;
 }
 
 .indicador .title span{
