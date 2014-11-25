@@ -1,18 +1,16 @@
 moment.locale('pt-br');
+var timer;
 
-var Api = { address : "http://localhost:4567/api" };
+var Api         = JSON.parse(window.localStorage["Api"]) || { address : "http://localhost:4567/api" };
+// var Situacoes   = JSON.parse(window.localStorage["Situacoes"]);
+
+
 var Indicadores = {
 
   situacao : "Finalizado",
 
   items : {
-    "volumeVendasTotal" : 0,
-    "volumeVendasDiario" : 0,
-    "volumeMedioDoPedido" : 0,
-    "mediaDiariaDePedidos" : 0,
-    "numeroPedidosPeriodo" : 0,
-    "mediaItemsDoPedido" : 0,
-    "produtosMaisVendidos" : 0
+    "volumeVendasTotal" : false
   },
 
   periodo : {
@@ -51,8 +49,12 @@ var Indicadores = {
     return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
-  produtosMaisVendidos :function(){
+  produtosMaisVendidos : function(){
     return "SELECT I.CODIGO AS \"CODIGO\", I.DESCRICAO AS \"DESCRICAO\", SUM(I.QUANTIDADE) AS \"QUANTIDADE\", {FN TRUNCATE({FN ROUND(AVG(I.PRECOUNIT),2)},2)} AS \"PRECO_MEDIO\", {FN CONVERT({FN TRUNCATE({FN ROUND(SUM(I.VALOR),2)},2)}, SQL_FLOAT)} AS \"TOTAL\" FROM {OJ ZW14VPEI I JOIN ZW14VPED V ON V.NUMEROPEDIDO = I.NUMEROPEDIDO } WHERE V.SITUACAO = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY I.CODIGO, I.DESCRICAO ORDER BY 1";
+  },
+
+  clientesMaisCompraram : function(){
+    return "SELECT V.NOMECLIENTE AS \"CLIENTE\", {FN CONVERT({FN ROUND(SUM(V.VALORTOTALGERAL),2)},SQL_FLOAT)} AS \"TOTAL\" FROM ZW14VPED V WHERE V.SITUACAO = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY V.NOMECLIENTE ORDER BY 1";
   }
 
 };
@@ -147,29 +149,11 @@ var Dashboard = {
 
   },
 
-  renderPie : function(el, data){
-    var title    = '<h3>Produtos mais vendidos (%)</h3>';
+  renderPie : function(el, dataset, colors, title){
     var serie    = 'Quantidade';
-    var dataset  = [];
-    var percentual;
-    var total    = 0;
-    var produtos = (data.rows).sort(function(a,b){
-      if (a[4] > b[4])
-        return -1;
-      if (a[4] < b[4])
-        return 1;
-      return 0;
-    });
-
-    for (var i = 0; i < 9; i++) {
-      percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
-      dataset.push([ produtos[i][1].toUpperCase(), percentual ]);
-      total += percentual;
-    };
-    dataset.push([ "OUTROS", 100 - total ]);
 
     $(el).highcharts({
-      colors : ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse(),
+      colors : colors,
       // colors : ["rgb(16, 76, 69)", "rgb(18, 104, 92)", "rgb(20, 132, 115)", "rgb(22, 160, 133)", "rgb(24, 188, 156)", "rgb(26, 216, 179)", "rgb(28, 244, 202)"],
       chart: {
           type: 'pie',
@@ -408,17 +392,84 @@ var Dashboard = {
     });
 
     /* Produtos mais vendidos */
-    statement = Indicadores.produtosMaisVendidos();
-    Dashboard.getStatement(statement).done(function(data){
-      Dashboard.renderPie('[data-type=produtos-mais-vendidos]', data);
-    });
+    function  chamaMaisVendidos(){
+      window.clearInterval(timer);
+      statement = Indicadores.produtosMaisVendidos();
+      Dashboard.getStatement(statement).done(function(data){
+        var colors = ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
+        var dataset = [];
+        var percentual;
+        var total    = 0;
+        var produtos = (data.rows).sort(function(a,b){
+          if (a[4] > b[4])
+            return -1;
+          if (a[4] < b[4])
+            return 1;
+          return 0;
+        });
+
+        for (var i = 0; i < 9; i++) {
+          percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
+          dataset.push([ produtos[i][1].toUpperCase(), percentual ]);
+          total += percentual;
+        };
+        dataset.push([ "OUTROS", 100 - total ]);
+
+        Dashboard.loader('[data-type=produtos-mais-vendidos]');
+        Dashboard.renderPie('[data-type=produtos-mais-vendidos] .pie', dataset, colors, '<h3>Produtos mais vendidos (%)</h3>');
+      });
+    }
+
+    /* Clientes que mais Compraram */
+    function chamaMaisClientes(){
+      statement = Indicadores.clientesMaisCompraram();
+      Dashboard.getStatement(statement).done(function(data){
+        var colors = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
+        var dataset = [];
+        var percentual;
+        var total    = 0;
+        var produtos = (data.rows).sort(function(a,b){
+          if (a[1] > b[1])
+            return -1;
+          if (a[1] < b[1])
+            return 1;
+          return 0;
+        });
+
+        for (var i = 0; i < 9; i++) {
+          percentual = (produtos[i][1] * 100) / Indicadores.items.volumeVendasTotal;
+          dataset.push([ produtos[i][0].toUpperCase(), percentual ]);
+          total += percentual;
+        };
+        dataset.push([ "OUTROS", 100 - total ]);
+
+        Dashboard.loader('[data-type=clientes-mais-compraram]');
+        Dashboard.renderPie('[data-type=clientes-mais-compraram] .pie', dataset, colors, '<h3>Clientes que mais venderam (%)</h3>');
+      });
+    }
+
+    timer = window.setInterval(function(){
+      console.log(Indicadores.items.volumeVendasTotal);
+      if (Indicadores.items.volumeVendasTotal !== false){
+        chamaMaisVendidos();
+        chamaMaisClientes();
+      }
+    }, 200);
+
 
   },
 
   init : function(){
-    Dashboard.initDaterangepicker();
-    $('#reportrange span.text').html('Últimos 30 dias');
-    Dashboard.fetchIndicadores();
+
+    Dashboard.getStatement(statement).done(function(data){
+
+      console.log(data.rows);
+
+      Dashboard.initDaterangepicker();
+      $('#reportrange span.text').html('Últimos 30 dias');
+      Dashboard.fetchIndicadores();
+
+    });
   }
 };
 

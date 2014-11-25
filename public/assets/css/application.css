@@ -161,3 +161,14 @@ textarea#statement{
 *{
   border-radius: 0px !important;
 }
+
+[data-type="produtos-mais-vendidos"],
+[data-type="clientes-mais-compraram"]{
+  background-color: #FFF;
+  position: relative;
+}
+
+[data-type="produtos-mais-vendidos"] .loader p,
+[data-type="clientes-mais-compraram"] .loader p{
+  padding-top: 30%;
+}
