@@ -163,45 +163,92 @@ var Dashboard = {
 
     for (var i = 0; i < 9; i++) {
       percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
-      dataset.push([ produtos[i][1], percentual ]);
+      dataset.push([ produtos[i][1].toUpperCase(), percentual ]);
       total += percentual;
     };
-    dataset.push([ "Outros", 100 - total ]);
-
-    console.log(dataset);
+    dataset.push([ "OUTROS", 100 - total ]);
 
     $(el).highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false
-        },
-        credits: {
-          enabled: false
-        },
-        legend: false,
-        title: {
+      colors : ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse(),
+      // colors : ["rgb(16, 76, 69)", "rgb(18, 104, 92)", "rgb(20, 132, 115)", "rgb(22, 160, 133)", "rgb(24, 188, 156)", "rgb(26, 216, 179)", "rgb(28, 244, 202)"],
+      chart: {
+          type: 'pie',
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false
+      },
+      credits: {
+        enabled: false
+      },
+
+      legend : false,
+
+      plotOptions: {
+          pie: {
+              borderColor: '#FFF',
+              innerSize: '60%',
+              dataLabels: {
+                enabled: false
+              }
+          }
+      },
+      title: {
             text: title
         },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-               dataLabels: {
-                   enabled: false
-               },
-                showInLegend: true
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: serie,
-            data: dataset
-        }]
+      tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      series: [{
+        type: 'pie',
+        name: serie,
+        data: dataset
+      }]
+    },
+    function(chart) {
+        var xpos = '50%';
+        var ypos = '53%';
+        var circleradius = 102;
+
+        chart.renderer.circle(xpos, ypos, circleradius).attr({
+            fill: '#fff'
+        }).add();
     });
+
+
+    // $(el).highcharts({
+    //     // colors : ["rgb(16, 76, 69)", "rgb(18, 104, 92)", "rgb(20, 132, 115)", "rgb(22, 160, 133)", "rgb(24, 188, 156)", "rgb(26, 216, 179)", "rgb(28, 244, 202)"],
+    //     colors : [ "#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", '#1abc9c', "#3498db", "#9b59b6", "#34495e","#95a5a6" ],
+    //     chart: {
+    //         plotBackgroundColor: null,
+    //         plotBorderWidth: null,
+    //         plotShadow: false
+    //     },
+    //     credits: {
+    //       enabled: false
+    //     },
+    //     legend: false,
+    //     title: {
+    //         text: title
+    //     },
+    //     tooltip: {
+    //         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    //     },
+    //     plotOptions: {
+    //         pie: {
+    //             allowPointSelect: true,
+    //             cursor: 'pointer',
+    //            dataLabels: {
+    //                enabled: false
+    //            },
+    //             showInLegend: true
+    //         }
+    //     },
+    //     series: [{
+    //         type: 'pie',
+    //         name: serie,
+    //         data: dataset
+    //     }]
+    // });
   },
 
   prepareDataset : function(rows){
