@@ -108,12 +108,11 @@ textarea#statement{
   position: absolute;
   height: 100%;
   width: 100%;
-  display: none;
-  color: #FFF;
+  /*display: none;*/
   left: 0px;
   top: 0px;
+  /*background: rgba(236, 240, 241, 0.6);*/
   background-color: inherit;
-  background: rgba(236, 240, 241, 0.6);
   z-index: 10;
 }
 
@@ -124,7 +123,7 @@ textarea#statement{
 .loader p{
   font-family: "Helvetica";
   font-size: 120%;
-  color: #333;
+  color: #2c3e50;
   padding-top: 10%;
 }
 

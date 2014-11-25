@@ -60,12 +60,12 @@ var Indicadores = {
 var Dashboard = {
 
   renderGraph : function(data){
-    if(data.records === 0 ){
-      $(".alert").remove();
-      var message = "Não encontramos nenhum dado para esse periodo";
-      $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
-      return;
-    }
+    // if(data.records === 0 ){
+    //   $(".alert-dismissable").remove();
+    //   var message = "Não encontramos nenhum dado para esse periodo";
+    //   $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+    //   return;
+    // }
 
     var valores    = Dashboard.prepareDataset(data.rows);
     valores.labels = valores.labels.length > 31 ? false : valores.labels;
@@ -99,8 +99,8 @@ var Dashboard = {
         }
       },
       title : {
-        // text : "<h3>Volume de vendas diário</h3>",
-        text : false,
+        text : "<h3>Volume de vendas diário</h3>",
+        // text : false,
         useHtml : true,
         style : {
           fontFamily : "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -148,7 +148,7 @@ var Dashboard = {
   },
 
   renderPie : function(el, data){
-    var title    = 'Produtos mais vendidos (%)';
+    var title    = '<h3>Produtos mais vendidos (%)</h3>';
     var serie    = 'Quantidade';
     var dataset  = [];
     var percentual;
@@ -180,9 +180,7 @@ var Dashboard = {
       credits: {
         enabled: false
       },
-
       legend : false,
-
       plotOptions: {
           pie: {
               borderColor: '#FFF',
@@ -193,7 +191,8 @@ var Dashboard = {
           }
       },
       title: {
-            text: title
+            text: title,
+            useHtml : true,
         },
       tooltip: {
           pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -214,41 +213,6 @@ var Dashboard = {
         }).add();
     });
 
-
-    // $(el).highcharts({
-    //     // colors : ["rgb(16, 76, 69)", "rgb(18, 104, 92)", "rgb(20, 132, 115)", "rgb(22, 160, 133)", "rgb(24, 188, 156)", "rgb(26, 216, 179)", "rgb(28, 244, 202)"],
-    //     colors : [ "#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", '#1abc9c', "#3498db", "#9b59b6", "#34495e","#95a5a6" ],
-    //     chart: {
-    //         plotBackgroundColor: null,
-    //         plotBorderWidth: null,
-    //         plotShadow: false
-    //     },
-    //     credits: {
-    //       enabled: false
-    //     },
-    //     legend: false,
-    //     title: {
-    //         text: title
-    //     },
-    //     tooltip: {
-    //         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-    //     },
-    //     plotOptions: {
-    //         pie: {
-    //             allowPointSelect: true,
-    //             cursor: 'pointer',
-    //            dataLabels: {
-    //                enabled: false
-    //            },
-    //             showInLegend: true
-    //         }
-    //     },
-    //     series: [{
-    //         type: 'pie',
-    //         name: serie,
-    //         data: dataset
-    //     }]
-    // });
   },
 
   prepareDataset : function(rows){
@@ -314,7 +278,7 @@ var Dashboard = {
   },
 
   loader : function(container){
-    var container = container || '.grafico-content';
+    var container = container || '.container';
     var loader    = $(container).find('.loader');
     $(loader).stop().fadeToggle();
   },
@@ -366,6 +330,7 @@ var Dashboard = {
           Indicadores.periodo.inicio = start.format("YYYY-MM-DD 00:00:00");
           Indicadores.periodo.fim    = end.format("YYYY-MM-DD 00:00:00");
 
+          Dashboard.loader();
           Dashboard.fetchIndicadores();
       }
     );
@@ -393,7 +358,6 @@ var Dashboard = {
 
     /* Volume de Vendas Total */
     var statement = Indicadores.volumeVendasTotal();
-    Dashboard.loader("[data-type=volume-total-de-vendas]");
     Dashboard.getStatement(statement).done(function(data){
       var valor = data.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
@@ -403,7 +367,6 @@ var Dashboard = {
 
     /* Média diária de Pedidos */
     statement = Indicadores.mediaDiariaDePedidos();
-    Dashboard.loader("[data-type=media-diaria-de-pedidos]");
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
@@ -412,7 +375,6 @@ var Dashboard = {
 
     /* Valor Médio do Pedido */
     statement = Indicadores.valorMedioDoPedido();
-    Dashboard.loader("[data-type=valor-medio-do-pedido]");
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
@@ -421,7 +383,6 @@ var Dashboard = {
 
     /* Média de itens do Pedido */
     statement = Indicadores.numeroPedidosPeriodo();
-    Dashboard.loader("[data-type=media-itens-do-pedido]");
     Dashboard.getStatement(statement).done(function(data){
       var num   = data.rows[0][0] || 0;
       if (num === 0) {
@@ -440,7 +401,6 @@ var Dashboard = {
     });
 
     /* Média de itens do Pedido */
-    Dashboard.loader(".grafico-content");
     statement = Indicadores.volumeVendasDiario();
     Dashboard.getStatement(statement).done(function(data){
       Dashboard.renderGraph(data);
