@@ -3,18 +3,28 @@ moment.locale('pt-br');
 var Api = { address : "http://localhost:4567/api" };
 var Indicadores = {
 
-  situacao : "PED:Finalizado",
+  situacao : "Finalizado",
+
+  items : {
+    "volumeVendasTotal" : 0,
+    "volumeVendasDiario" : 0,
+    "volumeMedioDoPedido" : 0,
+    "mediaDiariaDePedidos" : 0,
+    "numeroPedidosPeriodo" : 0,
+    "mediaItemsDoPedido" : 0,
+    "produtosMaisVendidos" : 0
+  },
 
   periodo : {
     inicio    : (moment({ day: 30, month : 10, year : 2013 }).subtract(29,'days').format("YYYY-MM-DD 00:00:00")),
     fim       : (moment({ day: 30, month : 10, year : 2013 }).format("YYYY-MM-DD 00:00:00")),
-    duracao : function(grandeza) {
+    duracao   : function(grandeza) {
       var grandeza  = grandeza || 'days';
       var fim       = moment(Indicadores.periodo.fim);
       var inicio    = moment(Indicadores.periodo.inicio);
       var diferenca = fim.diff(inicio,grandeza);
       return diferenca+1;
-    }
+    },
   },
 
   volumeVendasTotal : function(){
@@ -41,6 +51,10 @@ var Indicadores = {
     return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
   },
 
+  produtosMaisVendidos :function(){
+    return "SELECT I.CODIGO AS \"CODIGO\", I.DESCRICAO AS \"DESCRICAO\", SUM(I.QUANTIDADE) AS \"QUANTIDADE\", {FN TRUNCATE({FN ROUND(AVG(I.PRECOUNIT),2)},2)} AS \"PRECO_MEDIO\", {FN CONVERT({FN TRUNCATE({FN ROUND(SUM(I.VALOR),2)},2)}, SQL_FLOAT)} AS \"TOTAL\" FROM {OJ ZW14VPEI I JOIN ZW14VPED V ON V.NUMEROPEDIDO = I.NUMEROPEDIDO } WHERE V.SITUACAO = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY I.CODIGO, I.DESCRICAO ORDER BY 1";
+  }
+
 };
 
 var Dashboard = {
@@ -57,7 +71,7 @@ var Dashboard = {
     valores.labels = valores.labels.length > 31 ? false : valores.labels;
 
     $('#volume-vendas').highcharts({
-      colors : ['#3498db'],
+      colors : ['#3498DB', "#16A085"],
       chart: {
         type: 'areaspline',
         zoomType : 'x',
@@ -133,41 +147,28 @@ var Dashboard = {
 
   },
 
-  renderPie1 : function(el){
+  renderPie : function(el, data){
+    var title    = 'Produtos mais vendidos (%)';
+    var serie    = 'Quantidade';
+    var dataset  = [];
+    var percentual;
+    var total    = 0;
+    var produtos = (data.rows).sort(function(a,b){
+      if (a[4] > b[4])
+        return -1;
+      if (a[4] < b[4])
+        return 1;
+      return 0;
+    });
 
-    if (el === '#pie1') {
-      title = 'Quantidade Vendas Produto (%)';
-      serie = 'Quantidade';
-      data = [
-          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
-          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
-          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
-          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
-          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
-      ];
-    }
-    else if (el === '#pie2') {
-      title = 'Volume de vendas por Cliente';
-      serie = 'Quantidade';
-      data = [
-          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
-          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
-          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
-          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
-          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
-      ];
-    }
-    else {
-      title = 'Volume de vendas por Vendedor';
-      serie = 'Quantidade';
-      data = [
-          ['LUSTRE 36LP-10W.BIP. METAL',   45.0],
-          ['ARANDELA 1LP-25W.HALOP. EM ALUMINIO COM VIDRO',       26.8],
-          ['PENDENTE 1LP-BIPINO C/CUPULA EM VIDRO BRANCO',    8.5],
-          ['ABAJOUR 1-LP-HALOPIN METAL C/VD.FOSCO',     6.2],
-          ['APLIQUE 2LP-E14 QUADRO OXIDADO',   0.7]
-      ];
-    }
+    for (var i = 0; i < 9; i++) {
+      percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
+      dataset.push([ produtos[i][1], percentual ]);
+      total += percentual;
+    };
+    dataset.push([ "Outros", 100 - total ]);
+
+    console.log(dataset);
 
     $(el).highcharts({
         chart: {
@@ -198,7 +199,7 @@ var Dashboard = {
         series: [{
             type: 'pie',
             name: serie,
-            data: data
+            data: dataset
         }]
     });
   },
@@ -346,12 +347,13 @@ var Dashboard = {
     /* Volume de Vendas Total */
     var statement = Indicadores.volumeVendasTotal();
     Dashboard.getStatement(statement).done(function(data){
-      var media = data.rows[0][0] || 0;
-      Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', media);
+      var valor = data.rows[0][0] || 0;
+      Indicadores.items.volumeVendasTotal = valor;
+      Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', valor);
     });
 
     /* Média diária de Pedidos */
-    var statement = Indicadores.mediaDiariaDePedidos();
+    statement = Indicadores.mediaDiariaDePedidos();
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
@@ -383,23 +385,18 @@ var Dashboard = {
       Dashboard.renderGraph(data);
     });
 
+    /* Produtos mais vendidos */
+    statement = Indicadores.produtosMaisVendidos();
+    Dashboard.getStatement(statement).done(function(data){
+      Dashboard.renderPie('[data-type=produtos-mais-vendidos]', data);
+    });
+
   },
 
   init : function(){
     Dashboard.initDaterangepicker();
     $('#reportrange span.text').html('Últimos 30 dias');
     Dashboard.fetchIndicadores();
-    Dashboard.renderPie1('#pie1');
-    Dashboard.renderPie1('#pie2');
-    Dashboard.renderPie1('#pie3');
-
-    /* @todo Dividir a qtd de dias pelo periodo */
-
-    // var a = moment('1800-12-29');
-    // var b = moment('2000-01-01');
-    // var days = a.diff(b, 'days');
-
-
   }
 };
 
