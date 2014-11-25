@@ -1,7 +1,7 @@
 moment.locale('pt-br');
 var timer;
 
-var Api         = JSON.parse(window.localStorage["Api"]) || { address : "http://localhost:4567/api" };
+var Api = { address : "http://localhost:4567/api" };
 // var Situacoes   = JSON.parse(window.localStorage["Situacoes"]);
 
 
@@ -461,15 +461,23 @@ var Dashboard = {
 
   init : function(){
 
-    Dashboard.getStatement(statement).done(function(data){
+    // Dashboard.getStatement(statement).done(function(data){
 
-      console.log(data.rows);
+      // console.log(data.rows);
 
       Dashboard.initDaterangepicker();
       $('#reportrange span.text').html('Últimos 30 dias');
       Dashboard.fetchIndicadores();
 
-    });
+      $('#popover').popover({
+        html : true,
+        placement : "top",
+        content : "<p> Também chamado de <strong>Ticket Médio</strong>, vai auxiliá-lo a prever desde o momento do <a href='#'>retorno do investimento</a> até esforços de marketing para aumentar margens de lucro global para o seu negócio. A métrica é simples: cada vez que você faz uma venda, em média, você vai conseguir que o cliente gaste X reais. </p>",
+        title : "Valor médio do pedido",
+        trigger : 'focus'
+      });
+
+    // });
   }
 };
 

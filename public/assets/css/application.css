@@ -145,6 +145,21 @@ textarea#statement{
   opacity: 1;
   cursor: pointer;
 }
+
+.indicador .title button{
+  background: transparent;
+  border: 0px;
+  opacity: 1;
+  cursor: pointer;
+  color: #FFF;
+  opacity: 0.5;
+}
+
+.indicador .title button:hover,
+.indicador .title button:focus{
+  opacity: 1;
+}
+
 .indicador .valor{
   font-weight: bold;
 }
@@ -171,4 +186,9 @@ textarea#statement{
 [data-type="produtos-mais-vendidos"] .loader p,
 [data-type="clientes-mais-compraram"] .loader p{
   padding-top: 30%;
+}
+
+.popover{
+  max-width: 500px !important;
+  width: 500px !important;
 }
