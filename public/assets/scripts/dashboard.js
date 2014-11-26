@@ -263,7 +263,7 @@ var Dashboard = {
     if (forceInit)
       $(loader).hide();
 
-    $(loader).show();
+    $(loader).stop().fadeToggle();
   },
 
   initDaterangepicker : function(){
