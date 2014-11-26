@@ -265,7 +265,9 @@ var Dashboard = {
     var forceReset = showHide || 'show';
     var opacity    = showHide === 'hide' ? 0 : 1;
 
-    $(loader).finish().animate({ opacity: opacity });
+    $(loader).finish().animate({ opacity: opacity }, function(){
+      opacity == 1 ? $(this).show() : $(this).hide();
+    });
   },
 
   initDaterangepicker : function(){
