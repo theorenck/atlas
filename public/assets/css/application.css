@@ -1,5 +1,4 @@
 /* General Styles */
-
 .navbar {
   border-radius: 0;
 }
@@ -12,7 +11,6 @@ pre {
 }
 
 /* SQL Syntax Highlight Customization */
-
 .hljs{
   background:transparent;
   padding: 0px;
@@ -60,37 +58,13 @@ pre {
   line-height: 1.4;
 }
 
-/* Index Specifics (please let me out :S) */
-textarea#statement{
-  -webkit-transition: height ease-in-out 0.6s;
-  -o-transition: height ease-in-out  0.6s;
-  transition: height ease-in-out 0.6s;
-  height: 50px;
-}
-
-@media(max-width: 768px){
-  textarea#statement{
-    height: 120px;
-  }
-}
-
-@media(min-width: 768px){
-
-  textarea#statement:focus{
-    height: 350px;
-    resize: none;
-  }
-}
-
-
 /* Dashboard */
-
-.data-container button{
+.toolbar button{
   margin-bottom: 21px;
   text-align: left;
 }
 
-.data-container button .text{
+.toolbar button .text{
   margin-left: 10px;
   display: inline-block;
 }
@@ -108,12 +82,15 @@ textarea#statement{
   position: absolute;
   height: 100%;
   width: 100%;
-  /*display: none;*/
   left: 0px;
   top: 0px;
-  /*background: rgba(236, 240, 241, 0.6);*/
   background-color: inherit;
   z-index: 10;
+}
+
+.loader.loader-inverse,
+.loader.loader-inverse p{
+  color: #FFF;
 }
 
 .loader.visible{
@@ -127,7 +104,7 @@ textarea#statement{
   padding-top: 10%;
 }
 
-.meta-container .info{
+.indicadores-container .info{
   font-size: 36px;
   text-align: right;
 }
@@ -191,4 +168,14 @@ textarea#statement{
 .popover{
   max-width: 500px !important;
   width: 500px !important;
+}
+
+section{
+  position: relative;
+}
+
+.alert-alternate{
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+  color: #ffffff;
 }

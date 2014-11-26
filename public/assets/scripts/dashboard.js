@@ -2,12 +2,10 @@ moment.locale('pt-br');
 var timer;
 
 var Api = { address : "http://localhost:4567/api" };
-// var Situacoes   = JSON.parse(window.localStorage["Situacoes"]);
-
 
 var Indicadores = {
 
-  situacao : "LOC Finalizado",
+  situacao : "Finalizado",
 
   items : {
     "volumeVendasTotal" : false
@@ -21,7 +19,7 @@ var Indicadores = {
       var fim       = moment(Indicadores.periodo.fim);
       var inicio    = moment(Indicadores.periodo.inicio);
       var diferenca = fim.diff(inicio,grandeza);
-      return diferenca+1;
+      return diferenca + 1;
     },
   },
 
@@ -62,13 +60,6 @@ var Indicadores = {
 var Dashboard = {
 
   renderGraph : function(data){
-    // if(data.records === 0 ){
-    //   $(".alert-dismissable").remove();
-    //   var message = "Não encontramos nenhum dado para esse periodo";
-    //   $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
-    //   return;
-    // }
-
     var valores    = Dashboard.prepareDataset(data.rows);
     valores.labels = valores.labels.length > 31 ? false : valores.labels;
 
@@ -102,7 +93,6 @@ var Dashboard = {
       },
       title : {
         text : "<h3>Volume de vendas diário</h3>",
-        // text : false,
         useHtml : true,
         style : {
           fontFamily : "Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -134,16 +124,15 @@ var Dashboard = {
           valuePreffix: 'R$ '
       },
       credits: {
-          enabled: false
+        enabled: false
       },
       plotOptions: {
-          areaspline: {
-              fillOpacity: 0.5
-          }
+        areaspline: {
+          fillOpacity: 0.5
+        }
       },
       series: [
         { name: 'Volume de vendas diário', data : valores.volumeVendas},
-        // { name: 'Valor Médio do Pedido', data : valores.valorMedioDoPedido}
       ]
     });
 
@@ -156,30 +145,30 @@ var Dashboard = {
       colors : colors,
       // colors : ["rgb(16, 76, 69)", "rgb(18, 104, 92)", "rgb(20, 132, 115)", "rgb(22, 160, 133)", "rgb(24, 188, 156)", "rgb(26, 216, 179)", "rgb(28, 244, 202)"],
       chart: {
-          type: 'pie',
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
+        type: 'pie',
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
       },
       credits: {
         enabled: false
       },
       legend : false,
       plotOptions: {
-          pie: {
-              borderColor: '#FFF',
-              innerSize: '60%',
-              dataLabels: {
-                enabled: false
-              }
+        pie: {
+          borderColor: '#FFF',
+          innerSize: '60%',
+          dataLabels: {
+            enabled: false
           }
+        }
       },
       title: {
-            text: title,
-            useHtml : true,
-        },
+        text: title,
+        useHtml : true,
+      },
       tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
       },
       series: [{
         type: 'pie',
@@ -188,13 +177,13 @@ var Dashboard = {
       }]
     },
     function(chart) {
-        var xpos = '50%';
-        var ypos = '53%';
-        var circleradius = 102;
+      var xpos = '50%';
+      var ypos = '53%';
+      var circleradius = 102;
 
-        chart.renderer.circle(xpos, ypos, circleradius).attr({
-            fill: '#fff'
-        }).add();
+      chart.renderer.circle(xpos, ypos, circleradius).attr({
+          fill: '#fff'
+      }).add();
     });
 
   },
@@ -207,12 +196,16 @@ var Dashboard = {
 
     var valores   = {
       valorMedioDoPedido : [],
-      volumeVendasTotal : [],
-      volumeVendas : [],
-      labels : [],
-      plotBands : []
+      volumeVendasTotal  : [],
+      volumeVendas       : [],
+      labels             : [],
+      plotBands          : []
     };
 
+    /**
+     * Procura nas linhas se existe valor para todos os dias,
+     * se não existir insere a data e valor zero no array das linhas
+     */
     while(dataAtual <= dataFinal){
       var find = _.find(rows, function(el) {
         return (el[0] === dataAtual);
@@ -222,6 +215,7 @@ var Dashboard = {
 
       dataAtual = moment(dataAtual).add(1, 'day').format("YYYY-MM-DD");
     }
+
 
     $.each(dataSet, function(el, val){
       data      = val[0].split('-');
@@ -261,9 +255,14 @@ var Dashboard = {
 
   },
 
-  loader : function(container){
+  loader : function(container, forceInit){
     var container = container || '.container';
     var loader    = $(container).find('.loader');
+
+    var forceInit = forceInit || false;
+    if (forceInit)
+      $(loader).hide();
+
     $(loader).stop().fadeToggle();
   },
 
@@ -309,7 +308,7 @@ var Dashboard = {
             text = start.format(formato) + '  até  ' + end.format('D [de] MMMM, YYYY');
           }
 
-          $('#reportrange span.text').html(text);
+          $('[data-behaivor=show-actual-date]').html(text);
 
           Indicadores.periodo.inicio = start.format("YYYY-MM-DD 00:00:00");
           Indicadores.periodo.fim    = end.format("YYYY-MM-DD 00:00:00");
@@ -460,24 +459,17 @@ var Dashboard = {
   },
 
   init : function(){
+    Dashboard.initDaterangepicker();
+    $('[data-behaivor=show-actual-date]').html('Últimos 30 dias');
+    Dashboard.fetchIndicadores();
 
-    // Dashboard.getStatement(statement).done(function(data){
-
-      // console.log(data.rows);
-
-      Dashboard.initDaterangepicker();
-      $('#reportrange span.text').html('Últimos 30 dias');
-      Dashboard.fetchIndicadores();
-
-      $('#popover').popover({
-        html : true,
-        placement : "top",
-        content : "<p> Também chamado de <strong>Ticket Médio</strong>, vai auxiliá-lo a prever desde o momento do <a href='#'>retorno do investimento</a> até esforços de marketing para aumentar margens de lucro global para o seu negócio. A métrica é simples: cada vez que você faz uma venda, em média, você vai conseguir que o cliente gaste X reais. </p>",
-        title : "Valor médio do pedido",
-        trigger : 'focus'
-      });
-
-    // });
+    $('#popover').popover({
+      html : true,
+      placement : "top",
+      content : "<p> Também chamado de <strong>Ticket Médio</strong>, vai auxiliá-lo a prever desde o momento do <a href='#'>retorno do investimento</a> até esforços de marketing para aumentar margens de lucro global para o seu negócio. A métrica é simples: cada vez que você faz uma venda, em média, você vai conseguir que o cliente gaste X reais. </p>",
+      title : "Valor médio do pedido",
+      trigger : 'focus'
+    });
   }
 };
 

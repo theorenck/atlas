@@ -12,6 +12,7 @@
 </head>
 <body>
 
+  <!-- Inicio Navbar -->
   <div class="navbar navbar-default">
 
     <div class="navbar-header">
@@ -32,13 +33,14 @@
           <a href="/dashboard.html">Dashboard</a>
         </li>
       </ul>
-
     </div>
+
   </div>
+  <!-- Fim Navbar -->
 
   <div class="container">
 
-    <div class>
+    <div class="header-area">
       <div class="row">
         <div class="col-sm-12">
           <h1>
@@ -48,23 +50,33 @@
       </div>
     </div>
 
+    <!-- Inicio Daterangepicker -->
     <div class="row">
       <div class="col-sm-12">
-        <div class="data-container">
+
+       <!--  <div class="btn-group">
+          <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+          <a href="#" class="btn btn-primary">Primary</a>
+        </div> -->
+
+        <div class="toolbar">
           <button id="reportrange" class="btn btn-primary btn-block">
-              <span class="fa fa-calendar"></span>
-              <span class="text"></span>
+            <span class="fa fa-calendar"></span>
+            <span class="text" data-behaivor="show-actual-date"></span>
           </button>
         </div>
       </div>
     </div>
+    <!-- Fim Daterangepicker -->
 
-    <section class="meta-container">
 
+    <!-- Inicio Indicadores -->
+    <section class="indicadores-container">
       <div class="row">
+
         <div class="col-sm-6 col-xs-12 col-md-3">
           <div class="indicador alert alert-success" data-behaivor="indicador" data-type="volume-total-de-vendas">
-            <div class="loader"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
 
             <h4 class="title">
               Volume de vendas
@@ -82,7 +94,7 @@
 
         <div class="col-sm-6 col-xs-12 col-md-3">
           <div class="indicador alert alert-info" data-behaivor="indicador" data-type="valor-medio-do-pedido">
-            <div class="loader"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
             <h4 class="title">
               Pedido médio
               <small><button class="pull-right" id="popover"><i class="glyphicon glyphicon-question-sign"></i></button></small>
@@ -96,8 +108,8 @@
         </div>
 
         <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="media-diaria-de-pedidos">
-            <div class="loader"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+          <div class="indicador alert alert-warning" data-behaivor="indicador" data-type="media-diaria-de-pedidos">
+            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
             <h4 class="title">
               Média diária
               <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
@@ -111,8 +123,8 @@
         </div>
 
         <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="media-itens-do-pedido">
-            <div class="loader"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+          <div class="indicador alert alert-alternate" data-behaivor="indicador" data-type="media-itens-do-pedido">
+            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
             <h4 class="title">
               Média de itens
               <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
@@ -127,7 +139,9 @@
 
       </div>
     </section>
+    <!-- Fim Indicadores -->
 
+    <!-- Inicio Gráfico Volume de vendas -->
     <section>
       <div class="row">
         <div class="col-sm-12">
@@ -138,8 +152,10 @@
         </div>
       </div>
     </section>
+    <!-- Fim Gráfico Volume de vendas -->
 
-    <section data-type="big-loader" style="position: relative">
+
+    <section data-type="big-loader">
       <div class="row">
         <div class="col-xs-6 col-md-6 col-md-6" data-type="produtos-mais-vendidos">
           <div class="loader"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
