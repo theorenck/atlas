@@ -258,12 +258,12 @@ var Dashboard = {
   loader : function(container, forceInit){
     var container = container || '.container';
     var loader    = $(container).find('.loader');
-
     var forceInit = forceInit || false;
+
     if (forceInit)
       $(loader).hide();
 
-    $(loader).stop().fadeToggle();
+    $(loader).show();
   },
 
   initDaterangepicker : function(){

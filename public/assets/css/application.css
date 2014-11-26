@@ -76,6 +76,13 @@ pre {
 
 .grafico-content{
   position: relative;
+  background:#ecf0f1;
+}
+
+.grafico-content #volume-vendas{
+  min-width: 310px;
+  height: 400px;
+  margin: 0 auto;
 }
 
 .loader{
@@ -86,6 +93,26 @@ pre {
   top: 0px;
   background-color: inherit;
   z-index: 10;
+
+  /* Internet Explorer 10 */
+  display:-ms-flexbox;
+  -ms-flex-pack:center;
+  -ms-flex-align:center;
+
+  /* Firefox */
+  display:-moz-box;
+  -moz-box-pack:center;
+  -moz-box-align:center;
+
+  /* Safari, Opera, and Chrome */
+  display:-webkit-box;
+  -webkit-box-pack:center;
+  -webkit-box-align:center;
+
+  /* W3C */
+  display:box;
+  box-pack:center;
+  box-align:center;
 }
 
 .loader.loader-inverse,
@@ -101,7 +128,7 @@ pre {
   font-family: "Helvetica";
   font-size: 120%;
   color: #2c3e50;
-  padding-top: 10%;
+  margin: 0px;
 }
 
 .indicadores-container .info{
