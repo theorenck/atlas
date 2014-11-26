@@ -124,7 +124,9 @@ function appendResults(data) {
 
 function prepareSyntaxHighlight(){
   return CodeMirror.fromTextArea(document.getElementById("statement"), {
-    lineNumbers: false,
+    lineNumbers: true,
+    extraKeys: {"Ctrl-Space": "autocomplete"},
+    mode: {name: "sql", globalVars: true},
     styleActiveLine: false,
     matchBrackets: true,
     mode : 'text/x-sql',
