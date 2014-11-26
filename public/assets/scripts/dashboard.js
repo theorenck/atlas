@@ -255,15 +255,17 @@ var Dashboard = {
 
   },
 
-  loader : function(container, forceInit){
-    var container = container || '.container';
-    var loader    = $(container).find('.loader');
-    var forceInit = forceInit || false;
+  /**
+   * @var container el que contém o loader
+   * @showHide "show" ou "hide", default pra "show", força o status do loader
+   */
+  loader : function(container, showHide){
+    var container  = container || '.container';
+    var loader     = $(container).find('.loader');
+    var forceReset = showHide || 'show';
+    var opacity    = showHide === 'hide' ? 0 : 1;
 
-    if (forceInit)
-      $(loader).hide();
-
-    $(loader).stop().fadeToggle();
+    $(loader).finish().animate({ opacity: opacity });
   },
 
   initDaterangepicker : function(){
@@ -313,7 +315,7 @@ var Dashboard = {
           Indicadores.periodo.inicio = start.format("YYYY-MM-DD 00:00:00");
           Indicadores.periodo.fim    = end.format("YYYY-MM-DD 00:00:00");
 
-          Dashboard.loader();
+          Dashboard.loader('.container', true);
           Dashboard.fetchIndicadores();
       }
     );
@@ -345,7 +347,7 @@ var Dashboard = {
       var valor = data.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
       Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', valor);
-      Dashboard.loader("[data-type=volume-total-de-vendas]");
+      Dashboard.loader("[data-type=volume-total-de-vendas]", 'hide');
     });
 
     /* Média diária de Pedidos */
@@ -353,7 +355,7 @@ var Dashboard = {
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
-      Dashboard.loader("[data-type=media-diaria-de-pedidos]");
+      Dashboard.loader("[data-type=media-diaria-de-pedidos]", 'hide');
     });
 
     /* Valor Médio do Pedido */
@@ -361,7 +363,7 @@ var Dashboard = {
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
-      Dashboard.loader("[data-type=valor-medio-do-pedido]");
+      Dashboard.loader("[data-type=valor-medio-do-pedido]", 'hide');
     });
 
     /* Média de itens do Pedido */
@@ -370,7 +372,7 @@ var Dashboard = {
       var num   = data.rows[0][0] || 0;
       if (num === 0) {
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0);
-        Dashboard.loader("[data-type=media-itens-do-pedido]");
+        Dashboard.loader("[data-type=media-itens-do-pedido]", 'hide');
         return;
       }
 
@@ -379,7 +381,7 @@ var Dashboard = {
       Dashboard.getStatement(statement).done(function(data){
         var media = data.rows[0][0] || 0;
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', media);
-        Dashboard.loader("[data-type=media-itens-do-pedido]");
+        Dashboard.loader("[data-type=media-itens-do-pedido]", 'hide');
       });
     });
 
@@ -387,7 +389,7 @@ var Dashboard = {
     statement = Indicadores.volumeVendasDiario();
     Dashboard.getStatement(statement).done(function(data){
       Dashboard.renderGraph(data);
-      Dashboard.loader(".grafico-content");
+      Dashboard.loader(".grafico-content", 'hide');
     });
 
     /* Produtos mais vendidos */
@@ -414,7 +416,7 @@ var Dashboard = {
         };
         dataset.push([ "OUTROS", 100 - total ]);
 
-        Dashboard.loader('[data-type=produtos-mais-vendidos]');
+        Dashboard.loader('[data-type=produtos-mais-vendidos]', 'hide');
         Dashboard.renderPie('[data-type=produtos-mais-vendidos] .pie', dataset, colors, '<h3>Produtos mais vendidos (%)</h3>');
       });
     }
@@ -423,7 +425,7 @@ var Dashboard = {
     function chamaMaisClientes(){
       statement = Indicadores.clientesMaisCompraram();
       Dashboard.getStatement(statement).done(function(data){
-        var colors = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
+        var colors  = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
         var total    = 0;
@@ -442,13 +444,12 @@ var Dashboard = {
         };
         dataset.push([ "OUTROS", 100 - total ]);
 
-        Dashboard.loader('[data-type=clientes-mais-compraram]');
+        Dashboard.loader('[data-type=clientes-mais-compraram]', 'hide');
         Dashboard.renderPie('[data-type=clientes-mais-compraram] .pie', dataset, colors, '<h3>Clientes que mais compraram (%)</h3>');
       });
     }
 
     timer = window.setInterval(function(){
-      console.log(Indicadores.items.volumeVendasTotal);
       if (Indicadores.items.volumeVendasTotal !== false){
         chamaMaisVendidos();
         chamaMaisClientes();
