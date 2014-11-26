@@ -189,12 +189,16 @@ function appendResults(data) {
 function prepareSyntaxHighlight(){
   code = CodeMirror.fromTextArea(document.getElementById("statement"), {
     lineNumbers: true,
-    extraKeys: {"Ctrl-Space": "autocomplete"},
+    extraKeys: {"Ctrl-Space": "autocomplete", "Ctrl-S" : function(e){ console.log(e.options.value); }},
     mode: {name: "sql", globalVars: true},
     styleActiveLine: false,
     matchBrackets: true,
     mode : 'text/x-sql',
     viewportMargin: Infinity,
+    onKeyUp : function(stream){
+      console.log(stream);
+    }
+    // readOnly : true
     // hintOptions: {
     //   tables: {
     //       "zw14ppro": [ "codproduto", "codbarras", "descricao1" ],
@@ -206,6 +210,8 @@ function prepareSyntaxHighlight(){
   code.setOption("hintOptions",{
       tables: JSON.parse(localStorage.getItem("tables"))
   });
+
+
 
   return code;
 }

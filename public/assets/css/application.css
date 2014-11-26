@@ -52,10 +52,13 @@ pre {
   overflow-x: auto;
 }
 
-.CodeMirror pre{
+.CodeMirror pre, .CodeMirror-linenumber{
   font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.4;
+}
+.CodeMirror pre{
+  padding-left: 8px;
 }
 
 /* Dashboard */
