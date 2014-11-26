@@ -1,5 +1,69 @@
 var API = { address : "http://localhost:4567/api" };
 
+
+Tables = {
+
+  fetched : {},
+
+  data : [],
+
+  info : {
+    fetched : 0,
+    completed : 0,
+  },
+
+  fetchTables : function(){
+    $.ajax({
+      url: API.address + '/tables',
+      type: 'GET',
+    })
+    .done(function(data) {
+      Tables.data = data.tables;
+      Tables.info.fetched = data.tables.length;
+      $('[data-type=fetch-tables]').find('.to').text(Tables.info.fetched);
+      Tables.fetchColumns();
+    });
+  },
+
+  fetchColumns : function(){
+
+    _.each(Tables.data, function(t){
+      $.ajax({
+        url: API.address + '/tables/' + t,
+        type: 'GET',
+      })
+      .done(function(data) {
+        var column = [];
+
+        _.each(data.columns, function(c){
+          column.push(c.name);
+        });
+
+        Tables.fetched[t] = column;
+
+        Tables.info.completed++;
+        $('[data-type=fetch-tables]').find('.from').text(Tables.info.completed);
+
+        if (Tables.info.completed === Tables.info.fetched) {
+          $('[data-type=fetch-tables]').find('.fa, .from, .to, .de').hide();
+        };
+      });
+
+    });
+  },
+
+  init : function () {
+    var _link  = $('[data-type=fetch-tables]');
+    _link.on('click', function(){
+      _link.find('.hidden').removeClass('hidden');
+      Tables.fetchTables();
+    });
+  }
+};
+
+$(Tables.init);
+
+
 $('[data-behavior~=execute-sql]').on('submit', function() {
   Index.editor.save();
   var _submit = $(this).find('button[type="submit"]');
@@ -68,7 +132,7 @@ function reset(statement) {
   $("#results-area").addClass("hidden");
   $("#results-area h2 small").remove();
   $('[data-behavior~=see-more]').data("currentPage",0);
-  $("#sql code").empty().text(statement.toUpperCase());
+  $("#sql code").empty().text(statement);
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
   });
@@ -123,15 +187,27 @@ function appendResults(data) {
 }
 
 function prepareSyntaxHighlight(){
-  return CodeMirror.fromTextArea(document.getElementById("statement"), {
+  code = CodeMirror.fromTextArea(document.getElementById("statement"), {
     lineNumbers: true,
     extraKeys: {"Ctrl-Space": "autocomplete"},
     mode: {name: "sql", globalVars: true},
     styleActiveLine: false,
     matchBrackets: true,
     mode : 'text/x-sql',
-    viewportMargin: Infinity
+    viewportMargin: Infinity,
+    // hintOptions: {
+    //   tables: {
+    //       "zw14ppro": [ "codproduto", "codbarras", "descricao1" ],
+    //       "table2": [ "other_columns1", "other_columns2" ]
+    //   }
+    // }
   });
+
+  code.setOption("hintOptions",{
+      tables: JSON.parse(localStorage.getItem("tables"))
+  });
+
+  return code;
 }
 
 var Index = {
@@ -140,11 +216,17 @@ var Index = {
 
   init : function(){
     Index.editor = prepareSyntaxHighlight();
+    // Index.editor.setOption("hintOptions",{
+    //   tables: {
+    //       "zw14ppro": [ "codproduto", "codbarras", "descricao1" ],
+    //       "table2": [ "other_columns1", "other_columns2" ]
+    //   }}
+    // )
   }
 
 
 };
-$(Index.init)
+$(Index.init);
 
 
 
