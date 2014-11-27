@@ -189,8 +189,14 @@ function appendResults(data) {
 function prepareSyntaxHighlight(){
   code = CodeMirror.fromTextArea(document.getElementById("statement"), {
     lineNumbers: true,
-    extraKeys: {"Ctrl-Space": "autocomplete", "Ctrl-S" : function(e){ console.log(e.options.value); }},
+    extraKeys: {
+      "Ctrl-Space": "autocomplete",
+      "Ctrl-S" : function(e){ console.log(e.options.value); },
+      "Ctrl-Enter" : function(){
+        $('[data-behavior=execute-sql]').submit();
+      }},
     mode: {name: "sql", globalVars: true},
+    tabSize : 2,
     styleActiveLine: false,
     matchBrackets: true,
     mode : 'text/x-sql',
