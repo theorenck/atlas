@@ -217,6 +217,11 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     return stream.eatWhile(/\w/) ? "variable-2" : null;
   }
 
+  function hookParam(stream){
+  // var x = e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g);
+  // console.log(e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g));
+  }
+
   // variable token
   function hookVar(stream) {
     // variables
@@ -274,7 +279,10 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     atoms: set("false true null unknown"),
     operatorChars: /^[*+\-%<>!=]/,
     dateSQL: set("date time timestamp"),
-    support: set("ODBCdotTable doubleQuote binaryNumber hexNumber")
+    support: set("ODBCdotTable doubleQuote binaryNumber hexNumber"),
+    hooks: {
+      ":":   hookParam
+    }
   });
 
   CodeMirror.defineMIME("text/x-mssql", {

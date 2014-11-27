@@ -1,3 +1,8 @@
+*{
+  border-radius: 0px !important;
+  /*outline: 1px solid !important;*/
+}
+
 /* General Styles */
 .navbar {
   border-radius: 0;
@@ -180,9 +185,7 @@ pre {
   border: 1px solid;
 }
 
-*{
-  border-radius: 0px !important;
-}
+
 
 [data-type="produtos-mais-vendidos"],
 [data-type="clientes-mais-compraram"]{
@@ -209,3 +212,32 @@ section{
   border-color: #8e44ad;
   color: #ffffff;
 }
+
+
+/* Table Editable */
+[data-behaivor="table-editable"] thead td,
+[data-behaivor="table-editable"]{
+  cursor: default !important;
+}
+
+[data-behaivor="table-editable"] tbody td{
+  cursor: pointer;
+}
+
+
+[data-behaivor="table-editable"]{
+  border: 2px solid #dce4ec;
+  background-color: #FFF;
+}
+
+[data-behaivor="table-editable"] td{
+  height: 35px;
+}
+
+/*[data-behaivor="table-editable"] + input:focus,
+[data-behaivor="table-editable"] + input:active,
+[data-behaivor="table-editable"] + input
+{
+  border: 2px solid #2c3e50 !important;
+  outline: 0px solid #2c3e50 !important;
+}*/
