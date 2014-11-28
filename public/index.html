@@ -59,7 +59,9 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label class="control-label">SQL</label>
-                <textarea autofocus="true" id="statement" data-behaivor="code" class="form-control" rows="4">SELECT  p.codproduto,  p.codbarras,  p.descricao1 FROM zw14ppro p WHERE situacao = 'N'
+                <textarea autofocus="true" id="statement" data-behaivor="code" class="form-control" rows="4">
+
+  SELECT p.codproduto, p.codbarras, p.descricao1 FROM zw14ppro p WHERE p.situacao = 'N'
 </textarea>
               </div>
             </div>
@@ -96,7 +98,6 @@
                 <label class="control-label">Limite</label>
                 <input type="text" id="limit" class="form-control" value="100"/>
               </div>
-
             </div>
           </div>
 

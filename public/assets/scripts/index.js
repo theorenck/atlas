@@ -73,10 +73,12 @@ $(Tables.init);
  */
 function prepareStatement(statement, params){
   $.each(params, function(index, value){
-    statement = statement.replace(':' + index, value);
+    // statement = statement.replace(':' + index, value);
+    tokens = statement.split(':' + index);
+    statement = tokens.join(value);
   });
 
-  return statement.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g) || statement;
+  return statement.match(/\s\:([a-zA-Z0-9]+[a-zA-Z0-9_]*\b)/g) || statement;
 }
 
 $('[data-behavior~=execute-sql]').on('submit', function() {

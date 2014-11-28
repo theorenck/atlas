@@ -89,9 +89,9 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
       }
       // .table_name (ODBC)
       // // ref: http://dev.mysql.com/doc/refman/5.6/en/identifier-qualifiers.html
-      if (support.ODBCdotTable == true && stream.match(/^[a-zA-Z_]+/)) {
+      if (support.ODBCdotTable == true && stream.match(/^[a-zA-Z0-9_]+/)) {
         return "variable-2";
-      }
+      }  
     } else if (operatorChars.test(ch)) {
       // operators
       stream.eatWhile(operatorChars);
@@ -274,7 +274,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
   // A generic SQL Mode. It's not a standard, it just try to support what is generally supported
   CodeMirror.defineMIME("text/x-sql", {
     name: "sql",
-    keywords: set(sqlKeywords + "begin sum convert count timestampadd"),
+    keywords: set(sqlKeywords + "group begin avg min max sum truncate round convert count timestampadd"),
     builtin: set("null bool boolean bit blob enum long longblob longtext medium mediumblob mediumint mediumtext time timestamp tinyblob tinyint tinytext text bigint int int1 int2 int3 int4 int8 integer float float4 float8 double char varbinary varchar varcharacter precision real date datetime year unsigned signed decimal numeric sql_float sql_tsi_day"),
     atoms: set("false true null unknown"),
     operatorChars: /^[*+\-%<>!=]/,

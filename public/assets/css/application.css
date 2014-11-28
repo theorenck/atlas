@@ -16,25 +16,35 @@ pre {
 }
 
 /* SQL Syntax Highlight Customization */
-.hljs{
-  background:transparent;
-  padding: 0px;
-}
 
-.hljs-keyword,
 .cm-s-default .cm-keyword {
-  color:#f39c12;
+  color: #f39c12;
   font-weight: bold;
 }
 
-.hljs-literal, .hljs-number,
 .cm-s-default .cm-number {
   color: #18BC9D;
 }
 
-.hljs-string,
 .cm-s-default .cm-string {
   color:#3498db;
+}
+
+.cm-s-default .cm-comment {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.cm-s-default .cm-variable-2 {
+  color: #000;
+}
+
+.cm-s-default .cm-builtin {
+  color: #000;
+}
+
+.cm-s-default .cm-atom {
+  color: #18BC9D;
 }
 
 .CodeMirror {
