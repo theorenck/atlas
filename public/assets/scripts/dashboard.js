@@ -246,14 +246,17 @@ var Dashboard = {
   getStatement : function(statement){
     return $.ajax({
       type: "POST",
-      contentType: "application/json",  
+      contentType: "application/json",
       url: API.address + '/statements',
       data: JSON.stringify({"statement": statement})
     })
     .fail(function(err){
       $(".container > .alert").remove();
-      var getErrorMessagege = getErrorMessage(err);
+      var message = getErrorMessage(err);
       $(".container").prepend('<div data- class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+      if (err.status === 0) {
+        verifyServer();
+      };
     })
 
   },
@@ -489,4 +492,17 @@ function getErrorMessage(xhr) {
   } else {
     return xhr.statusText;
   }
+}
+
+function verifyServer (){
+  $.get(API.address + '/ping', function(data) {
+      $(".container > .alert").remove();
+      var message  = "Estamos de volta :D";
+      $(".container").prepend('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh great! </strong>'+message+'</div>');
+      return false;
+  }).fail(function(xhr){
+    setTimeout(function () {
+      verifyServer();
+    }, 1500);
+  });
 }

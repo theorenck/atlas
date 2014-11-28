@@ -91,7 +91,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
       // // ref: http://dev.mysql.com/doc/refman/5.6/en/identifier-qualifiers.html
       if (support.ODBCdotTable == true && stream.match(/^[a-zA-Z0-9_]+/)) {
         return "variable-2";
-      }  
+      }
     } else if (operatorChars.test(ch)) {
       // operators
       stream.eatWhile(operatorChars);
@@ -217,10 +217,9 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     return stream.eatWhile(/\w/) ? "variable-2" : null;
   }
 
-  function hookParam(stream){
-  // var x = e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g);
-  // console.log(e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g));
-  }
+  // function hookParam(stream){
+  //   return stream.match(/\:([a-zA-Z0-9]+[a-zA-Z0-9_]*\b)/) ? "variable-2" : null;
+  // }
 
   // variable token
   function hookVar(stream) {
@@ -280,9 +279,9 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     operatorChars: /^[*+\-%<>!=]/,
     dateSQL: set("date time timestamp"),
     support: set("ODBCdotTable doubleQuote binaryNumber hexNumber"),
-    hooks: {
-      ":":   hookParam
-    }
+    // hooks: {
+    //   ":":   hookParam
+    // }
   });
 
   CodeMirror.defineMIME("text/x-mssql", {

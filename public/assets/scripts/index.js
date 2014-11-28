@@ -73,8 +73,7 @@ $(Tables.init);
  */
 function prepareStatement(statement, params){
   $.each(params, function(index, value){
-    // statement = statement.replace(':' + index, value);
-    tokens = statement.split(':' + index);
+    tokens    = statement.split(':' + index);
     statement = tokens.join(value);
   });
 
@@ -93,6 +92,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
   statement = prepareStatement(statement, params);
 
   if (Array.isArray(statement)) {
+    reset(statement);
     var message  = "Desculpe, mas você esqueceu de preencher os seguintes parâmetros: <strong>" + statement.join(', ').replace(':', '') + '</strong>';
     $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
     return false;
@@ -102,7 +102,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
     $.ajax({
       type: "POST",
       url: API.address + "/statements",
-      contentType: "application/json",  
+      contentType: "application/json",
       data: JSON.stringify({
         "statement": statement,
         "limit": parseInt($('input#limit').val(), 10),
@@ -122,6 +122,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
     .fail(function(xhr, status, error) {
       fail(xhr, status, error, function() {
         _submit.button("reset");
+        verifyServer();
       });
     });
     return false;
@@ -144,7 +145,7 @@ $('[data-behavior~=see-more]').on('click', function() {
   $.ajax({
     type: "POST",
     url: API.address + "/statements",
-    contentType: "application/json",  
+    contentType: "application/json",
     data: JSON.stringify({
       "statement":statement,
       "limit": limit,
@@ -152,7 +153,7 @@ $('[data-behavior~=see-more]').on('click', function() {
       "params" : params
     })
   })
-  .done(function(data) {    
+  .done(function(data) {
     appendResults(data);
     $('[data-behavior~=see-more]').button("reset");
     $('[data-behavior~=see-more]').data("currentPage",page+1);
@@ -160,6 +161,7 @@ $('[data-behavior~=see-more]').on('click', function() {
   .fail( function(xhr, status, error) {
     fail(xhr, status, error, function() {
       $('[data-behavior~=see-more]').button("reset");
+      verifyServer();
     });
   });
 });
@@ -233,23 +235,17 @@ function appendResults(data) {
   $(_tbody).append(template);
 }
 
-// function pega(e){
-//   var params = [];
-//   console.log(e);
-//   var x = e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g);
-//   console.log(e.match(/\:([a-zA]+[a-zA-Z0-9_]*)/g));
-
-
-// }
-
 function prepareParams(){
   var headers  = $('[data-behaivor=table-editable]').find('tbody tr');
   var params   = {}
+  var index, value;
 
   $.each(headers, function(i, el){
-    valor = $(el).find('td:last').text();
-    if($.trim(valor) !== '')
-      params[$(el).find('td:first').text()] = valor;
+    value = $(el).find('td:last').text();
+    if($.trim(value) !== ''){
+      index = $.trim($(el).find('td:first').text());
+      params[index] = $.trim(value);
+    }
   });
 
   return params;
@@ -453,3 +449,17 @@ $(Index.init);
   // });
 
 // });
+
+
+function verifyServer (){
+  $.get(API.address + '/ping', function(data) {
+      reset(data);
+      var message  = "Estamos de volta :D";
+      $(".container").prepend('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh great! </strong>'+message+'</div>');
+      return false;
+  }).fail(function(xhr){
+    setTimeout(function () {
+      verifyServer();
+    }, 1500);
+  });
+}
