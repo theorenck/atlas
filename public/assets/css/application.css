@@ -251,3 +251,54 @@ section{
   border: 2px solid #2c3e50 !important;
   outline: 0px solid #2c3e50 !important;
 }*/
+
+
+
+.atlCheckbox{
+  background-image: url('../images/checkmarks-sprite.png');
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+}
+
+.atlCheckbox.atlCheckbox_hover{
+  background-position:  0 -24px;
+}
+
+.atlCheckbox.atlCheckbox_checked{
+  background-position:  0 -96px;
+}
+
+.atlCheckbox.atlCheckbox_active.atlCheckbox_checked,
+.atlCheckbox_checked:hover{
+  background-position:  0 -72px;
+}
+
+.atlCheckbox.atlCheckbox_active{
+  background-position:  0 -168px;
+}
+
+.atlCheckbox input{
+  display: block;
+  margin: 0 !important;
+  opacity: 0.01;
+  border: 0 none;
+  overflow: hidden;
+  border: 0 none;
+  width: 24px;
+  height: 24px;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  background-image: url('../images/checkmarks-sprite.png');
+}
+
+.atlCheckbox:hover,
+.atlCheckbox input:hover{
+  cursor: pointer;
+}
+
+.input-group-addon{
+  border-width: 2px;
+  padding: 0px 15px;
+  background-color: #F9F9F9;
+}

@@ -1,4 +1,4 @@
-var API = { address : "http://localhost:3000/api" };
+ API = { address : "http://localhost:3000/api" };
 
 var editor;
 var CodeView;
@@ -463,3 +463,26 @@ function verifyServer (){
     }, 1500);
   });
 }
+
+
+
+
+$(document).on('mouseenter', '[data-type=checkbox]', function(){
+  $(this).addClass('atlCheckbox_hover');
+});
+
+$(document).on('focus', '[data-type=checkbox]', function(){
+  $(this).addClass('atlCheckbox_active');
+});
+
+$(document).on('click', '[data-type=checkbox]', function(){
+  $(this).toggleClass('atlCheckbox_checked');
+});
+
+$(document).on('blur', '[data-type=checkbox]', function(){
+  $(this).removeClass('atlCheckbox_active');
+});
+
+$(document).on('mouseleave', '[data-type=checkbox]', function(){
+  $(this).removeClass('atlCheckbox_hover').removeClass('.atlCheckbox_active');
+});
