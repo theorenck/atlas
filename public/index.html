@@ -6,7 +6,6 @@
   <link rel="icon" href="/assets/images/online.png" id="favicon">
   <title>Atlas Console</title>
   <link rel="stylesheet" href="/assets/css/bootstrap-flatly.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/default.min.css">
   <link rel="stylesheet" href="/assets/plugins/codemirror/codemirror.css">
   <link rel="stylesheet" href="/assets/css/application.css">
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" rel="stylesheet">
@@ -115,18 +114,19 @@
     <div  id="results-area" class="hidden">
       <h2>Resultados</h2>
       <div class="well">
+
         <div class="row">
           <div class="col-md-12">
-            <div id="sql">
-              <pre><code class="sql"></code></pre>
-            </div>
+            <label class="control-label">SQL</label>
+            <textarea id="sql"></textarea>
           </div>
-        </div>
-        <div class="row">
+
           <div class="col-md-12">
-            <div>
-              <button type="button" data-behavior="edit-sql" class="btn btn-default btn-block">Editar SQL</button>
-            </div>
+            <p style="margin-bottom: 53px;"></p>
+          </div>
+
+          <div class="col-md-12">
+            <button type="button" data-behavior="edit-sql" class="btn btn-default btn-block">Editar SQL</button>
           </div>
         </div>
       </div>
@@ -152,7 +152,6 @@
 
   <script src="/assets/plugins/jquery/jquery.min.js"></script>
   <script src="/assets/plugins/bootstrap/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
   <script src="/assets/plugins/lodash/lodash.min.js"></script>
   <script src="/assets/plugins/codemirror/codemirror.js"></script>
   <script src="/assets/plugins/codemirror/codemirror-sql.js"></script>

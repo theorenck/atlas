@@ -1,5 +1,7 @@
 var API = { address : "http://localhost:4567/api" };
 
+var editor;
+var CodeView;
 
 Tables = {
 
@@ -45,6 +47,7 @@ Tables = {
         $('[data-type=fetch-tables]').find('.from').text(Tables.info.completed);
 
         if (Tables.info.completed === Tables.info.fetched) {
+          localStorage.setItem("tables", JSON.stringify(Tables.fetched));
           $('[data-type=fetch-tables]').find('.fa, .from, .to, .de').hide();
         };
       });
@@ -77,6 +80,9 @@ function prepareStatement(statement, params){
 
 $('[data-behavior~=execute-sql]').on('submit', function() {
   Index.editor.save();
+  CodeView.getDoc().setValue($('#statement').val());
+
+
   var _submit   = $(this).find('button[type="submit"]');
   var statement = $('textarea#statement').val();
   var params    = prepareParams();
@@ -102,6 +108,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
         appendResults(data);
         _submit.button("reset");
         $("#results-area").removeClass("hidden");
+        CodeView.refresh();
         $("#query-area").addClass("hidden");
         $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
     }).fail(function(xhr, status, error) {
@@ -160,10 +167,6 @@ function reset(statement) {
   $("#results-area").addClass("hidden");
   $("#results-area h2 small").remove();
   $('[data-behavior~=see-more]').data("currentPage",0);
-  $("#sql code").empty().text(statement);
-  $('pre code').each(function(i, block) {
-    hljs.highlightBlock(block);
-  });
   $("#results table thead").remove();
   $("#results table tbody").empty();
 }
@@ -271,6 +274,19 @@ function prepareSyntaxHighlight(){
 
   code.setOption("hintOptions",{
       tables: JSON.parse(localStorage.getItem("tables"))
+  });
+
+  CodeView = CodeMirror.fromTextArea(document.getElementById("sql"), {
+    lineNumbers: true,
+    mode: {name: "sql", globalVars: true},
+    tabSize : 2,
+    tabMode : "default",
+    styleActiveLine: false,
+    matchBrackets: true,
+    mode : 'text/x-sql',
+    cursorBlinkRate : 0,
+    viewportMargin: Infinity,
+    readOnly : 'nocursor'
   });
 
   return code;
