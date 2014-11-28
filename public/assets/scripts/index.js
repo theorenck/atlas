@@ -115,6 +115,10 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
     .done(function(data) {
       createHeader(data);
       appendResults(data);
+      if(data.records === data.fetched)
+        $('[data-behavior=see-more]').hide();
+      else
+        $('[data-behavior=see-more]').show();
       _submit.button("reset");
       $("#results-area").removeClass("hidden");
       CodeView.refresh();
@@ -239,10 +243,8 @@ function appendResults(data) {
 }
 
 function prepareLimit(){
-
   if (!$('#limit').is(':disabled'))
-    $('#limit').val();
-
+    return parseInt($('#limit').val());
 }
 
 function prepareParams(){
