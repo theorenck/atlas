@@ -1,3 +1,3 @@
-require './atlas'
+require './main'
 
-run Atlas.new
+run Main.new
