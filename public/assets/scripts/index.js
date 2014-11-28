@@ -88,6 +88,8 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
   var _submit   = $(this).find('button[type="submit"]');
   var statement = $('textarea#statement').val();
   var params    = prepareParams();
+  var limit     = prepareLimit();
+  var offset    = function(){if( limit ){ return 0; }}();
 
   statement = prepareStatement(statement, params);
 
@@ -105,8 +107,8 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       contentType: "application/json",
       data: JSON.stringify({
         "statement": statement,
-        "limit": parseInt($('input#limit').val(), 10),
-        "offset": 0,
+        "limit": limit,
+        "offset": offset,
         "params" : params
       })
     })
@@ -134,10 +136,11 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
 $('[data-behavior~=see-more]').on('click', function() {
   $('[data-behavior~=see-more]').button("loading");
 
-  var limit     = parseInt($('input#limit').val(), 10);
+  var limit     = prepareLimit();
   var page      = $(this).data("currentPage") || 1;
   var statement = $('textarea#statement').val();
   var params    = prepareParams();
+  var offset    = (function(){ if(limit) return limit * page; })();
 
   statement = prepareStatement(statement, params);
 
@@ -149,7 +152,7 @@ $('[data-behavior~=see-more]').on('click', function() {
     data: JSON.stringify({
       "statement":statement,
       "limit": limit,
-      "offset": limit * page,
+      "offset": offset,
       "params" : params
     })
   })
@@ -233,6 +236,13 @@ function appendResults(data) {
   var template = _.template(view, { rows : data.rows });
 
   $(_tbody).append(template);
+}
+
+function prepareLimit(){
+
+  if (!$('#limit').is(':disabled'))
+    $('#limit').val();
+
 }
 
 function prepareParams(){
@@ -425,6 +435,15 @@ var Index = {
     $('[data-behaivor=toggle-options]').on('click', function(){
       $(this).find('.caret').toggleClass('caret-reversed');
       $('[data-container=options]').stop().slideToggle();
+    });
+
+    $(document).on('click','[data-behaivor=disable-limit]', function(){
+      var checkbox = $(this).find(':checkbox');
+      if (checkbox.is(':checked')) {
+        $('[data-behaivor=limit-input]').removeAttr('disabled');
+      }else{
+        $('[data-behaivor=limit-input]').attr('disabled', 'disabled');
+      }
     });
 
   }
