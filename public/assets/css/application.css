@@ -4,8 +4,12 @@
 }
 
 /* General Styles */
-.navbar {
-  border-radius: 0;
+
+.caret.caret-reversed{
+    border-top: 0px;
+    border-bottom: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
 }
 
 pre {

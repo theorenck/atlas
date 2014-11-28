@@ -423,6 +423,7 @@ var Index = {
     });
 
     $('[data-behaivor=toggle-options]').on('click', function(){
+      $(this).find('.caret').toggleClass('caret-reversed');
       $('[data-container=options]').stop().slideToggle();
     });
 
