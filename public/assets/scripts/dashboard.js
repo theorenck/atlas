@@ -1,7 +1,7 @@
 moment.locale('pt-br');
 var timer;
 
-var Api = { address : "http://localhost:4567/api" };
+var API = { address : "http://localhost:3000/api" };
 
 var Indicadores = {
 
@@ -189,6 +189,7 @@ var Dashboard = {
   },
 
   prepareDataset : function(rows){
+    console.log(rows);
     var dataSet   = [];
 
     var dataAtual = moment(Indicadores.periodo.inicio).format("YYYY-MM-DD");
@@ -243,10 +244,12 @@ var Dashboard = {
    * @var statement query a ser executada
    **/
   getStatement : function(statement){
-    return $.post(
-      Api.address + '/statements',
-      JSON.stringify({"statement": statement})
-    )
+    return $.ajax({
+      type: "POST",
+      contentType: "application/json",  
+      url: API.address + '/statements',
+      data: JSON.stringify({"statement": statement})
+    })
     .fail(function(err){
       $(".container > .alert").remove();
       var getErrorMessagege = getErrorMessage(err);

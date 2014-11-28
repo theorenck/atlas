@@ -1,4 +1,4 @@
-var API = { address : "http://localhost:4567/api" };
+var API = { address : "http://localhost:3000/api" };
 
 var editor;
 var CodeView;
@@ -20,6 +20,7 @@ Tables = {
       type: 'GET',
     })
     .done(function(data) {
+      console.log(data)
       Tables.data = data.tables;
       Tables.info.fetched = data.tables.length;
       $('[data-type=fetch-tables]').find('.to').text(Tables.info.fetched);
@@ -96,22 +97,27 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
   }else{
     _submit.button("loading");
     reset(statement);
-    $.post(
-      API.address + "/statements",
-      JSON.stringify({
+    $.ajax({
+      type: "POST",
+      url: API.address + "/statements",
+      contentType: "application/json",  
+      data: JSON.stringify({
         "statement": statement,
         "limit": parseInt($('input#limit').val(), 10),
         "offset": 0,
         "params" : params
-      }), function(data) {
-        createHeader(data);
-        appendResults(data);
-        _submit.button("reset");
-        $("#results-area").removeClass("hidden");
-        CodeView.refresh();
-        $("#query-area").addClass("hidden");
-        $("#results-area h2").append($('<small>').text(" "+data.records+" registros encontrados"));
-    }).fail(function(xhr, status, error) {
+      })
+    })
+    .done(function(data) {
+      createHeader(data);
+      appendResults(data);
+      _submit.button("reset");
+      $("#results-area").removeClass("hidden");
+      CodeView.refresh();
+      $("#query-area").addClass("hidden");
+      $("#results-area h2").append($('<small>').text(" "+data.records+" registros"));
+    })
+    .fail(function(xhr, status, error) {
       fail(xhr, status, error, function() {
         _submit.button("reset");
       });
@@ -127,21 +133,29 @@ $('[data-behavior~=see-more]').on('click', function() {
 
   var limit     = parseInt($('input#limit').val(), 10);
   var page      = $(this).data("currentPage") || 1;
-  var statement = $("#sql").text();
+  var statement = $('textarea#statement').val();
   var params    = prepareParams();
 
-  $.post(
-    API.address + "/statements",
-    JSON.stringify({
+  statement = prepareStatement(statement, params);
+
+
+  $.ajax({
+    type: "POST",
+    url: API.address + "/statements",
+    contentType: "application/json",  
+    data: JSON.stringify({
       "statement":statement,
       "limit": limit,
       "offset": limit * page,
       "params" : params
-    }), function(data) {
-      appendResults(data);
-      $('[data-behavior~=see-more]').button("reset");
-      $('[data-behavior~=see-more]').data("currentPage",page+1);
-  }).fail( function(xhr, status, error) {
+    })
+  })
+  .done(function(data) {    
+    appendResults(data);
+    $('[data-behavior~=see-more]').button("reset");
+    $('[data-behavior~=see-more]').data("currentPage",page+1);
+  })
+  .fail( function(xhr, status, error) {
     fail(xhr, status, error, function() {
       $('[data-behavior~=see-more]').button("reset");
     });
