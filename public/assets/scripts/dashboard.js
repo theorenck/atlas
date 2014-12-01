@@ -219,12 +219,12 @@ var Dashboard = {
   /**
    * @var statement query a ser executada
    **/
-  getStatement : function(statement){
+  getStatement : function(statement, params){
     return $.ajax({
       type: "POST",
       contentType: "application/json",
       url: API.address + '/statements',
-      data: JSON.stringify({"statement": statement})
+      data: JSON.stringify({"statement": statement, params : params})
     })
     .fail(function(err){
       $(".container > .alert").remove();
@@ -332,7 +332,7 @@ var Dashboard = {
 
     /* Volume de Vendas Total */
     var statement = prepareStatement(Indicadores.statements.volumeVendasTotal, params);
-    Dashboard.getStatement(statement).done(function(data){
+    Dashboard.getStatement(statement, params).done(function(data){
       var valor = data.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
       Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', valor);
@@ -341,7 +341,7 @@ var Dashboard = {
 
     /* Média diária de Pedidos */
     statement = prepareStatement(Indicadores.statements.mediaDiariaDePedidos, params);
-    Dashboard.getStatement(statement).done(function(data){
+    Dashboard.getStatement(statement, params).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
       Dashboard.loader("[data-type=media-diaria-de-pedidos]", 'hide');
@@ -349,7 +349,7 @@ var Dashboard = {
 
     /* Valor Médio do Pedido */
     statement = prepareStatement(Indicadores.statements.valorMedioDoPedido, params);
-    Dashboard.getStatement(statement).done(function(data){
+    Dashboard.getStatement(statement, params).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
       Dashboard.loader("[data-type=valor-medio-do-pedido]", 'hide');
@@ -357,7 +357,7 @@ var Dashboard = {
 
     /* Média de itens do Pedido */
     statement = prepareStatement(Indicadores.statements.numeroPedidosPeriodo, params);
-    Dashboard.getStatement(statement).done(function(data){
+    Dashboard.getStatement(statement, params).done(function(data){
       var num   = data.rows[0][0] || 0;
       if (num === 0) {
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0);
@@ -368,7 +368,7 @@ var Dashboard = {
       params.numeroPedidos = num;
       statement = prepareStatement(Indicadores.statements.mediaItemsDoPedido, params);
 
-      Dashboard.getStatement(statement).done(function(data){
+      Dashboard.getStatement(statement, params).done(function(data){
         var media = data.rows[0][0] || 0;
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', media);
         Dashboard.loader("[data-type=media-itens-do-pedido]", 'hide');
@@ -377,7 +377,7 @@ var Dashboard = {
 
     /* Média de itens do Pedido */
     statement = prepareStatement(Indicadores.statements.volumeVendasDiario, params);
-    Dashboard.getStatement(statement).done(function(data){
+    Dashboard.getStatement(statement, params).done(function(data){
       Dashboard.renderGraph(data);
       Dashboard.loader(".grafico-content", 'hide');
     });
@@ -386,7 +386,7 @@ var Dashboard = {
     function  chamaMaisVendidos(){
       window.clearInterval(timer);
       statement = prepareStatement(Indicadores.statements.produtosMaisVendidos, params);
-      Dashboard.getStatement(statement).done(function(data){
+      Dashboard.getStatement(statement, params).done(function(data){
         var colors = ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
@@ -416,7 +416,7 @@ var Dashboard = {
     /* Clientes que mais Compraram */
     function chamaMaisClientes(){
       statement = prepareStatement(Indicadores.statements.clientesMaisCompraram, params);
-      Dashboard.getStatement(statement).done(function(data){
+      Dashboard.getStatement(statement, params).done(function(data){
         var colors  = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
