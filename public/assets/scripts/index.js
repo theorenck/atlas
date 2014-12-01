@@ -124,12 +124,10 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       $("#query-area").addClass("disabled");
       $("#results-area").removeClass("hidden");
       $('.atlCheckbox').addClass('atlCheckbox_disabled');
-      $(':input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
-
-      parseToView();
+      $('#query-area :input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
 
       code.setOption('readOnly', 'nocursor');
-      $("#results-area h2").append($('<small>').text(" "+data.records+" registros"));
+      $("h2[data-type=results]").append($('<small>').text(" "+data.records+" registros"));
     })
     .fail(function(xhr, status, error) {
       fail(xhr, status, error, function() {
@@ -187,6 +185,7 @@ $('[data-behavior~=edit-sql]').on('click', function(){
   $("#query-area").removeClass("disabled");
   $('.atlCheckbox').removeClass('atlCheckbox_disabled');
   $(':input').removeAttr('disabled');
+  $("h2[data-type=results] small").remove();
   code.setOption('readOnly', false);
 });
 
@@ -456,14 +455,6 @@ function verifyServer (){
     }, 1500);
   });
 }
-
-
-function parseToView(){
-
-  //
-
-}
-
 
 /**
  * CHECKBOX
