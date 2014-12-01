@@ -380,7 +380,6 @@ var Index = {
     });
 
     $(document).on('keyup', '[data-behaivor=table-editable] tbody tr:first td:first', function(event){
-      console.log('oi');
       if(event.shiftKey && event.keyCode === 9){
         window.setTimeout(function(){
           $('#advanced-options').focus();
