@@ -273,6 +273,18 @@ section{
   background-position:  0 -96px;
 }
 
+.atlCheckbox.atlCheckbox_disabled,
+.atlCheckbox.atlCheckbox_disabled input{
+  background-position:  0 -48px;
+  cursor: not-allowed;
+}
+
+.atlCheckbox.atlCheckbox_checked.atlCheckbox_disabled,
+.atlCheckbox.atlCheckbox_checked.atlCheckbox_disabled input{
+  background-position:  0 -192px;
+  cursor: not-allowed;
+}
+
 .atlCheckbox.atlCheckbox_active.atlCheckbox_checked,
 .atlCheckbox_checked:hover{
   background-position:  0 -72px;
@@ -305,4 +317,15 @@ section{
   border-width: 2px;
   padding: 0px 15px;
   background-color: #F9F9F9;
+}
+
+
+
+#query-area.disabled #table-editable-input{
+  display: none !important;
+}
+
+#query-area.disabled [data-behaivor="table-editable"] td:focus{
+  outline: 0 !important;
+  cursor: default;
 }

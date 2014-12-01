@@ -52,17 +52,16 @@
   <div class="container">
 
     <div id="query-area">
-      <h2>Console</h2>
+      <h2 data-type="console">Console</h2>
+      <h2 data-type="results" class="hidden">Resultados</h2>
+
       <div class="well">
         <form data-behavior="execute-sql">
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
                 <label class="control-label">SQL</label>
-                <textarea autofocus="true" id="statement" data-behaivor="code" class="form-control" rows="4">
-
-  SELECT p.codproduto, p.codbarras, p.descricao1 FROM zw14ppro p WHERE p.situacao = 'N'
-</textarea>
+                <textarea autofocus="true" id="statement" data-behaivor="code" class="form-control" rows="4">SELECT p.codproduto, p.codbarras, p.descricao1 FROM zw14ppro p WHERE p.situacao = 'N'</textarea>
               </div>
             </div>
 
@@ -109,9 +108,8 @@
 
           <div class="row">
             <div class="col-md-12">
-              <div>
-                <button tab-index="2" type="submit" data-loading-text="Carregando..." class="btn btn-success btn-block" style="width:100%">Executar SQL</button>
-              </div>
+              <button class="btn btn-success btn-block" data-type="console" type="submit" data-loading-text="Carregando...">Executar SQL</button>
+              <button class="btn btn-default btn-block hidden" data-type="results" type="button" data-behavior="edit-sql" >Editar SQL</button>
             </div>
           </div>
         </form>
@@ -119,24 +117,6 @@
     </div>
 
     <div  id="results-area" class="hidden">
-      <h2>Resultados</h2>
-      <div class="well">
-
-        <div class="row">
-          <div class="col-md-12">
-            <label class="control-label">SQL</label>
-            <textarea id="sql"></textarea>
-          </div>
-
-          <div class="col-md-12">
-            <p style="margin-bottom: 53px;"></p>
-          </div>
-
-          <div class="col-md-12">
-            <button type="button" data-behavior="edit-sql" class="btn btn-default btn-block">Editar SQL</button>
-          </div>
-        </div>
-      </div>
       <div class="row">
         <div class="col-md-12">
           <div class="panel panel-default">

@@ -82,8 +82,6 @@ function prepareStatement(statement, params){
 
 $('[data-behavior~=execute-sql]').on('submit', function() {
   Index.editor.save();
-  CodeView.getDoc().setValue($('#statement').val());
-
 
   var _submit   = $(this).find('button[type="submit"]');
   var statement = $('textarea#statement').val();
@@ -120,9 +118,17 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       else
         $('[data-behavior=see-more]').show();
       _submit.button("reset");
+
+      $("[data-type=results]").removeClass("hidden");
+      $("[data-type=console]").addClass("hidden");
+      $("#query-area").addClass("disabled");
       $("#results-area").removeClass("hidden");
-      CodeView.refresh();
-      $("#query-area").addClass("hidden");
+      $('.atlCheckbox').addClass('atlCheckbox_disabled');
+      $(':input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
+
+      parseToView();
+
+      code.setOption('readOnly', 'nocursor');
       $("#results-area h2").append($('<small>').text(" "+data.records+" registros"));
     })
     .fail(function(xhr, status, error) {
@@ -175,8 +181,13 @@ $('[data-behavior~=see-more]').on('click', function() {
 
 
 $('[data-behavior~=edit-sql]').on('click', function(){
-  $("#results-area").toggleClass("hidden");
-  $("#query-area").toggleClass("hidden");
+  $("[data-type=results]").addClass("hidden");
+  $("[data-type=console]").removeClass("hidden");
+  $("#results-area").addClass("hidden");
+  $("#query-area").removeClass("disabled");
+  $('.atlCheckbox').removeClass('atlCheckbox_disabled');
+  $(':input').removeAttr('disabled');
+  code.setOption('readOnly', false);
 });
 
 function fail(xhr, textStatus, errorThrown, callback) {
@@ -288,29 +299,10 @@ function prepareSyntaxHighlight(){
       console.log(stream);
     }
     // readOnly : true
-    // hintOptions: {
-    //   tables: {
-    //       "zw14ppro": [ "codproduto", "codbarras", "descricao1" ],
-    //       "table2": [ "other_columns1", "other_columns2" ]
-    //   }
-    // }
   });
 
   code.setOption("hintOptions",{
       tables: JSON.parse(localStorage.getItem("tables"))
-  });
-
-  CodeView = CodeMirror.fromTextArea(document.getElementById("sql"), {
-    lineNumbers: true,
-    mode: {name: "sql", globalVars: true},
-    tabSize : 2,
-    tabMode : "default",
-    styleActiveLine: false,
-    matchBrackets: true,
-    mode : 'text/x-sql',
-    cursorBlinkRate : 0,
-    viewportMargin: Infinity,
-    readOnly : 'nocursor'
   });
 
   return code;
@@ -318,7 +310,6 @@ function prepareSyntaxHighlight(){
 }
 
 var Index = {
-
   editor : [],
 
   init : function(){
@@ -338,25 +329,26 @@ var Index = {
       }
     });
 
+    /*
+      $(document).on('focus', "[data-behaivor=table-editable] tbody td",function(){
+        if (isLastTr === false) {
+          var exclui = false;
+          var qtdTds = $(this).closest('tr').find('td').length;
 
-    // $(document).on('focus', "[data-behaivor=table-editable] tbody td",function(){
-    //   if (isLastTr === false) {
-    //     var exclui = false;
-    //     var qtdTds = $(this).closest('tr').find('td').length;
+          $.each($(this).closest('tr').find('td'), function(index, td) {
+              if ($.trim($(td).text()) === '')
+                exclui++;
+          });
 
-    //     $.each($(this).closest('tr').find('td'), function(index, td) {
-    //         if ($.trim($(td).text()) === '')
-    //           exclui++;
-    //     });
+          if (exclui === qtdTds) {
+            $(this).closest('tr').remove();
+          };
 
-    //     if (exclui === qtdTds) {
-    //       $(this).closest('tr').remove();
-    //     };
+          $(this).closest('tr').next().find('td:first').focus();
 
-    //     $(this).closest('tr').next().find('td:first').focus();
-
-    //   }
-    // });
+        }
+      });
+    */
 
     /**
      * Quando entra na ultima linha, seta a flag para true
@@ -370,7 +362,6 @@ var Index = {
       isLastTr  = tr.index() === (qtdTr-1);
       isLastTd  = $(this).index() === (qtdTd-1);
     });
-
 
     // verifica se só foi clicado o TAB, sem shift
     $(document).on('keydown', '[data-behaivor=table-editable] tbody tr:last td:last', function(event){
@@ -397,7 +388,6 @@ var Index = {
         }, 1);
       }
     });
-
 
     $(document).on('keydown', '#limit', function(event){
       if(event.shiftKey && event.keyCode === 9){
@@ -449,28 +439,9 @@ var Index = {
     });
 
   }
-
-
 };
 $(Index.init);
 
-
-
-// $(function(){
-
-  // $(document).scroll(function(){
-  //   var alturaDocumento= $(document).height();
-  //   var alturaScrol    = $(document).scrollTop();
-  //   var percentualTopo = alturaDocumento * 0.6;
-
-  //   var qtdRegistrosCarregados   = 0;
-
-  //   if(alturaScrol > percentualTopo){
-  //     $('[data-behavior="see-more"]').click();
-  //   }
-  // });
-
-// });
 
 
 function verifyServer (){
@@ -487,8 +458,16 @@ function verifyServer (){
 }
 
 
+function parseToView(){
+
+  //
+
+}
 
 
+/**
+ * CHECKBOX
+ */
 $(document).on('mouseenter', '[data-type=checkbox]', function(){
   $(this).addClass('atlCheckbox_hover');
 });
