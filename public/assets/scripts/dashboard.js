@@ -1,6 +1,5 @@
 moment.locale('pt-br');
 var timer;
-
 var API = { address : "http://localhost:3000/api" };
 
 var Indicadores = {
@@ -23,38 +22,16 @@ var Indicadores = {
     },
   },
 
-  volumeVendasTotal : function(){
-    return "SELECT {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\" FROM zw14vped p WHERE p.situacao = '" + Indicadores.situacao + "'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
-  },
-
-  volumeVendasDiario : function(){
-    return "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = '" + Indicadores.situacao + "'AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY p.dataemiss ORDER BY p.dataemiss";
-  },
-
-  valorMedioDoPedido : function(){
-    return "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
-  },
-
-  mediaDiariaDePedidos : function(){
-    return "SELECT COUNT(p.numeropedido)/" + Indicadores.periodo.duracao() + " AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
-  },
-
-  numeroPedidosPeriodo : function(){
-    return "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
-  },
-
-  mediaItemsDoPedido : function(numeroPedidos){
-    return "SELECT COUNT(*)/" + numeroPedidos + " AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'}";
-  },
-
-  produtosMaisVendidos : function(){
-    return "SELECT I.CODIGO AS \"CODIGO\", I.DESCRICAO AS \"DESCRICAO\", SUM(I.QUANTIDADE) AS \"QUANTIDADE\", {FN TRUNCATE({FN ROUND(AVG(I.PRECOUNIT),2)},2)} AS \"PRECO_MEDIO\", {FN CONVERT({FN TRUNCATE({FN ROUND(SUM(I.VALOR),2)},2)}, SQL_FLOAT)} AS \"TOTAL\" FROM {OJ ZW14VPEI I JOIN ZW14VPED V ON V.NUMEROPEDIDO = I.NUMEROPEDIDO } WHERE V.SITUACAO = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY I.CODIGO, I.DESCRICAO ORDER BY 1";
-  },
-
-  clientesMaisCompraram : function(){
-    return "SELECT V.NOMECLIENTE AS \"CLIENTE\", {FN CONVERT({FN ROUND(SUM(V.VALORTOTALGERAL),2)},SQL_FLOAT)} AS \"TOTAL\" FROM ZW14VPED V WHERE V.SITUACAO = '" + Indicadores.situacao + "' AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS '" + Indicadores.periodo.inicio + "'} AND {TS '" + Indicadores.periodo.fim + "'} GROUP BY V.NOMECLIENTE ORDER BY 1";
+  statements : {
+    volumeVendasTotal     : "SELECT {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
+    volumeVendasDiario    : "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = :situacaoAND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY p.dataemiss ORDER BY p.dataemiss",
+    valorMedioDoPedido    : "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
+    mediaDiariaDePedidos  : "SELECT COUNT(p.numeropedido)/:duracao AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
+    numeroPedidosPeriodo  : "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
+    mediaItemsDoPedido    : "SELECT COUNT(*)/:numeroPedidos AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
+    produtosMaisVendidos  : "SELECT I.CODIGO AS \"CODIGO\", I.DESCRICAO AS \"DESCRICAO\", SUM(I.QUANTIDADE) AS \"QUANTIDADE\", {FN TRUNCATE({FN ROUND(AVG(I.PRECOUNIT),2)},2)} AS \"PRECO_MEDIO\", {FN CONVERT({FN TRUNCATE({FN ROUND(SUM(I.VALOR),2)},2)}, SQL_FLOAT)} AS \"TOTAL\" FROM {OJ zw14vpei I JOIN zw14vped V ON V.NUMEROPEDIDO = I.NUMEROPEDIDO } WHERE V.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY I.CODIGO, I.DESCRICAO ORDER BY 1",
+    clientesMaisCompraram : "SELECT V.NOMECLIENTE AS \"CLIENTE\", {FN CONVERT({FN ROUND(SUM(V.VALORTOTALGERAL),2)},SQL_FLOAT)} AS \"TOTAL\" FROM ZW14VPED V WHERE V.SITUACAO = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY V.NOMECLIENTE ORDER BY 1"
   }
-
 };
 
 var Dashboard = {
@@ -189,7 +166,6 @@ var Dashboard = {
   },
 
   prepareDataset : function(rows){
-    console.log(rows);
     var dataSet   = [];
 
     var dataAtual = moment(Indicadores.periodo.inicio).format("YYYY-MM-DD");
@@ -338,7 +314,6 @@ var Dashboard = {
         delimiter : '.'
     });
 
-
     valores = qtd.split(' ');
 
     if (valores.length > 1)
@@ -348,9 +323,15 @@ var Dashboard = {
   },
 
   fetchIndicadores : function(){
+    var params = {
+      situacao  : "'Finalizado'",
+      inicio    : "'" + Indicadores.periodo.inicio + "'",
+      fim       : "'" + Indicadores.periodo.fim + "'",
+      duracao   : Indicadores.periodo.duracao()
+    };
 
     /* Volume de Vendas Total */
-    var statement = Indicadores.volumeVendasTotal();
+    var statement = prepareStatement(Indicadores.statements.volumeVendasTotal, params);
     Dashboard.getStatement(statement).done(function(data){
       var valor = data.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
@@ -359,7 +340,7 @@ var Dashboard = {
     });
 
     /* Média diária de Pedidos */
-    statement = Indicadores.mediaDiariaDePedidos();
+    statement = prepareStatement(Indicadores.statements.mediaDiariaDePedidos, params);
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
@@ -367,7 +348,7 @@ var Dashboard = {
     });
 
     /* Valor Médio do Pedido */
-    statement = Indicadores.valorMedioDoPedido();
+    statement = prepareStatement(Indicadores.statements.valorMedioDoPedido, params);
     Dashboard.getStatement(statement).done(function(data){
       var media = data.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
@@ -375,7 +356,7 @@ var Dashboard = {
     });
 
     /* Média de itens do Pedido */
-    statement = Indicadores.numeroPedidosPeriodo();
+    statement = prepareStatement(Indicadores.statements.numeroPedidosPeriodo, params);
     Dashboard.getStatement(statement).done(function(data){
       var num   = data.rows[0][0] || 0;
       if (num === 0) {
@@ -384,7 +365,8 @@ var Dashboard = {
         return;
       }
 
-      statement = Indicadores.mediaItemsDoPedido(num);
+      params.numeroPedidos = num;
+      statement = prepareStatement(Indicadores.statements.mediaItemsDoPedido, params);
 
       Dashboard.getStatement(statement).done(function(data){
         var media = data.rows[0][0] || 0;
@@ -394,7 +376,7 @@ var Dashboard = {
     });
 
     /* Média de itens do Pedido */
-    statement = Indicadores.volumeVendasDiario();
+    statement = prepareStatement(Indicadores.statements.volumeVendasDiario, params);
     Dashboard.getStatement(statement).done(function(data){
       Dashboard.renderGraph(data);
       Dashboard.loader(".grafico-content", 'hide');
@@ -403,55 +385,59 @@ var Dashboard = {
     /* Produtos mais vendidos */
     function  chamaMaisVendidos(){
       window.clearInterval(timer);
-      statement = Indicadores.produtosMaisVendidos();
+      statement = prepareStatement(Indicadores.statements.produtosMaisVendidos, params);
       Dashboard.getStatement(statement).done(function(data){
         var colors = ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
         var total    = 0;
-        var produtos = (data.rows).sort(function(a,b){
-          if (a[4] > b[4])
-            return -1;
-          if (a[4] < b[4])
-            return 1;
-          return 0;
-        });
 
-        for (var i = 0; i < 9; i++) {
-          percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
-          dataset.push([ produtos[i][1].toUpperCase(), percentual ]);
-          total += percentual;
-        };
-        dataset.push([ "OUTROS", 100 - total ]);
+        if(data.rows.length > 0){
+          var produtos = (data.rows).sort(function(a,b){
+            if (a[4] > b[4])
+              return -1;
+            if (a[4] < b[4])
+              return 1;
+            return 0;
+          });
 
-        Dashboard.loader('[data-type=produtos-mais-vendidos]', 'hide');
+          for (var i = 0; i < 9; i++) {
+            percentual = (produtos[i][4] * 100) / Indicadores.items.volumeVendasTotal;
+            dataset.push([ produtos[i][1].toUpperCase(), percentual ]);
+            total += percentual;
+          };
+          dataset.push([ "OUTROS", 100 - total ]);
+        }
         Dashboard.renderPie('[data-type=produtos-mais-vendidos] .pie', dataset, colors, '<h3>Produtos mais vendidos (%)</h3>');
+        Dashboard.loader('[data-type=produtos-mais-vendidos]', 'hide');
       });
     }
 
     /* Clientes que mais Compraram */
     function chamaMaisClientes(){
-      statement = Indicadores.clientesMaisCompraram();
+      statement = prepareStatement(Indicadores.statements.clientesMaisCompraram, params);
       Dashboard.getStatement(statement).done(function(data){
         var colors  = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
         var total    = 0;
-        var produtos = (data.rows).sort(function(a,b){
-          if (a[1] > b[1])
-            return -1;
-          if (a[1] < b[1])
-            return 1;
-          return 0;
-        });
 
-        for (var i = 0; i < 9; i++) {
-          percentual = (produtos[i][1] * 100) / Indicadores.items.volumeVendasTotal;
-          dataset.push([ produtos[i][0].toUpperCase(), percentual ]);
-          total += percentual;
+        if (data.rows.length > 0) {
+          var produtos = (data.rows).sort(function(a,b){
+            if (a[1] > b[1])
+              return -1;
+            if (a[1] < b[1])
+              return 1;
+            return 0;
+          });
+
+          for (var i = 0; i < 9; i++) {
+            percentual = (produtos[i][1] * 100) / Indicadores.items.volumeVendasTotal;
+            dataset.push([ produtos[i][0].toUpperCase(), percentual ]);
+            total += percentual;
+          };
+          dataset.push([ "OUTROS", 100 - total ]);
         };
-        dataset.push([ "OUTROS", 100 - total ]);
-
         Dashboard.loader('[data-type=clientes-mais-compraram]', 'hide');
         Dashboard.renderPie('[data-type=clientes-mais-compraram] .pie', dataset, colors, '<h3>Clientes que mais compraram (%)</h3>');
       });
@@ -462,7 +448,7 @@ var Dashboard = {
         chamaMaisVendidos();
         chamaMaisClientes();
       }
-    }, 200);
+    }, 300);
 
 
   },
@@ -505,4 +491,13 @@ function verifyServer (){
       verifyServer();
     }, 1500);
   });
+}
+
+function prepareStatement(statement, params){
+  $.each(params, function(index, value){
+    tokens    = statement.split(':' + index);
+    statement = tokens.join(value);
+  });
+
+  return statement.match(/\s\:([a-zA-Z0-9]+[a-zA-Z0-9_]*\b)/g) || statement;
 }
