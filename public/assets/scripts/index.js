@@ -546,9 +546,12 @@ var Historico = {
       Historico.render();
     });
 
-    $('[data-behaivor=history-list]').on('click', 'li', function(){
-      var id = $(this).attr('data-id');
-      Historico.loadItem(id);
+    $('[data-behaivor=history-list]').on('click', 'li', function(e){
+      console.log();
+      if (!$(e.target).hasClass('remove-icon') && !$(e.target).hasClass('fa-trash')){
+        var id = $(this).attr('data-id');
+        Historico.loadItem(id);
+      }
     });
 
   },
