@@ -281,7 +281,14 @@ function prepareSyntaxHighlight(){
     lineNumbers: true,
     extraKeys: {
       "Ctrl-Space": "autocomplete",
-      "Ctrl-S" : function(e){ console.log(e.options.value); },
+      "Ctrl-S" : function(e){
+        Index.editor.save();
+        var statement = $('textarea#statement').val();
+        var params    = prepareParams();
+        var limit     = prepareLimit();
+
+        Historico.addItem(statement, params, limit)
+      },
       "F8" : function(){
         $('[data-behavior=execute-sql]').submit();
       },
