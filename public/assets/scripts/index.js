@@ -1,7 +1,6 @@
- API = { address : "http://localhost:3000/api" };
+API = { address : "http://localhost:3000/api" };
 
 var editor;
-var CodeView;
 
 Tables = {
 
@@ -91,12 +90,15 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
 
   statement = prepareStatement(statement, params);
 
+
+
   if (Array.isArray(statement)) {
     reset(statement);
     var message  = "Desculpe, mas você esqueceu de preencher os seguintes parâmetros: <strong>" + statement.join(', ').replace(':', '') + '</strong>';
     $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
     return false;
   }else{
+    Historico.addItem($('textarea#statement').val(),params,limit);
     _submit.button("loading");
     reset(statement);
     $.ajax({
@@ -455,6 +457,7 @@ function verifyServer (){
   });
 }
 
+
 /**
  * CHECKBOX
  */
@@ -477,3 +480,75 @@ $(document).on('blur', '[data-type=checkbox]', function(){
 $(document).on('mouseleave', '[data-type=checkbox]', function(){
   $(this).removeClass('atlCheckbox_hover').removeClass('.atlCheckbox_active');
 });
+
+
+
+var Historico = {
+
+  render : function(){
+    var history = JSON.parse(localStorage.getItem('history')) || [];
+    var view    = $('#historyItems').html();
+    var template= _.template(view, { rows : history.reverse() });
+    $('.history-list').html(template);
+  },
+
+  addItem : function(statement, params, limit){
+    var history = JSON.parse(localStorage.getItem('history')) || [];
+    var item    = {
+      id        : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
+      statement : statement,
+      params    : params,
+      limit     : limit,
+      inserted  : new Date()
+    }
+    history.push(item);
+    localStorage.setItem('history', JSON.stringify(history));
+    Historico.render();
+  },
+
+  removeItem : function(id){
+    var history = JSON.parse(localStorage.getItem('history')) || [];
+    _.remove(history, function(historyItem) { return historyItem.id === id });
+    localStorage.setItem('history', JSON.stringify(history));
+  },
+
+  loadItem : function(id){
+    var history = JSON.parse(localStorage.getItem('history')) || [];
+    var item    = _.find(history, function(historyItem) { return historyItem.id === id });
+    var _table  = $('[data-behaivor=table-editable] tbody');
+
+    /* Carregar no codeview */
+    Index.editor.setValue(item.statement);
+
+    /* Carregar parâmetros */
+    _table.find('tr').remove();
+    _.forEach(item.params, function(valor, nome){
+      _table.append('<tr><td tabindex="1">' + nome + '</td><td tabindex="1"></td><td tabindex="1">' + valor + '</td></tr>');
+    });
+
+    /* Carregar carregarLimite */
+    $('[data-behaivor=limit-input]').val(item.limit);
+  },
+
+  init : function(){
+    Historico.render();
+
+    $('[data-behaivor=history-list]').on('click', 'a', function(){
+      var id = $(this).closest('li').attr('data-id');
+      Historico.removeItem(id);
+      Historico.render();
+    });
+
+    $('[data-behaivor=history-list]').on('click', 'li', function(){
+      var id = $(this).attr('data-id');
+      Historico.loadItem(id);
+    });
+
+  },
+
+}
+$(Historico.init);
+
+
+
+$(function(){$(document).on('keypress', function(e){keys += (''+e.which); if (keys === '112979910997110') {$("body").css({"background-image": 'url("http://images2.fanpop.com/image/photos/8900000/Grid-pac-man-8970124-1680-1050.jpg")', "background-attachment": 'fixed', }); }; }); });

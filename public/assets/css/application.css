@@ -329,3 +329,67 @@ section{
   outline: 0 !important;
   cursor: default;
 }
+
+
+.history-list{
+  list-style: none;
+  margin-left:0px;
+  padding: 0px;
+}
+
+.history-list li{
+  padding: 10px;
+  position: relative;
+}
+
+.history-list li:hover{
+  background-color: #18bc9c;
+  cursor: pointer;
+}
+
+.history-list span,
+.history-list a{
+  display: inline-block;
+}
+
+.history-list .remove-icon{
+  display: none;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.history-list .remove-icon a{
+  color:#ecf0f1;
+}
+.history-list .remove-icon a:hover{
+  color: #FFF;
+}
+
+.history-list li:hover .remove-icon{
+  display: block;
+}
+
+.history-list .statement-text{
+  height: 20px;
+  overflow: hidden;
+}
+
+.wrapper-list{
+  max-height: 500px;
+  overflow: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
