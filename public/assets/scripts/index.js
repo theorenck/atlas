@@ -282,7 +282,7 @@ function appendResults(data) {
 }
 
 function prepareLimit(){
-  if (!$('#limit').is(':disabled'))
+  if ($('[data-behaivor=disable-limit] :checkbox').is(':checked'))
     return parseInt($('#limit').val());
 }
 
