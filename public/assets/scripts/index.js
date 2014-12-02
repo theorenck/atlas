@@ -19,7 +19,6 @@ Tables = {
       type: 'GET',
     })
     .done(function(data) {
-      console.log(data)
       Tables.data = data.tables;
       Tables.info.fetched = data.tables.length;
       $('[data-type=fetch-tables]').find('.to').text(Tables.info.fetched);
@@ -67,9 +66,19 @@ Tables = {
 $(Tables.init);
 
 
-/**
- * @return String ou Array Array com os params que faltaram, string se deu certo
- */
+function verificaParametros(statement, params){
+  var paramsStatement = _.map(statement.match(/\s\:([a-zA-Z0-9]+[a-zA-Z0-9_]*\b)/g), function(val) { return $.trim(val).replace(':',''); });
+  var paramsReturn = [];
+
+  _.forEach(params, function(value, index){
+    if(!_.contains(paramsStatement, index))
+      paramsReturn.push(index);
+  });
+
+  return paramsReturn.length > 0 ? paramsReturn.join(', ') : false;
+
+}
+
 function prepareStatement(statement, params){
   $.each(params, function(index, value){
     tokens    = statement.split(':' + index);
@@ -82,25 +91,30 @@ function prepareStatement(statement, params){
 $('[data-behavior~=execute-sql]').on('submit', function() {
   Index.editor.save();
 
-  var _submit   = $(this).find('button[type="submit"]');
-  var statement = $('textarea#statement').val();
-  var params    = prepareParams();
-  var limit     = prepareLimit();
-  var offset    = function(){if( limit ){ return 0; }}();
+  var _submit        = $(this).find('button[type="submit"]');
+  var statement      = $('textarea#statement').val();
+  var params         = prepareParams();
+  var limit          = prepareLimit();
+  var offset         = function(){if( limit ){ return 0; }}();
+  var paramsSobrando = verificaParametros(statement, params);
 
   statement = prepareStatement(statement, params);
 
-
+  reset(statement);
 
   if (Array.isArray(statement)) {
-    reset(statement);
     var message  = "Desculpe, mas você esqueceu de preencher os seguintes parâmetros: <strong>" + statement.join(', ').replace(':', '') + '</strong>';
     $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
     return false;
-  }else{
-    Historico.addItem($('textarea#statement').val(),params,limit);
+  }
+  else{
     _submit.button("loading");
-    reset(statement);
+
+    if(paramsSobrando !== false){
+      var message  = "Existem parâmetros não utilizados: <strong>" + paramsSobrando + '</strong>';
+      $(".container").prepend('<div class="alert alert-dismissable alert-warning"><button type="button" class="close" data-dismiss="alert">×</button><strong>Hey! </strong>'+message+'</div>');
+    }
+
     $.ajax({
       type: "POST",
       url: API.address + "/statements",
@@ -113,23 +127,33 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
       })
     })
     .done(function(data) {
-      createHeader(data);
-      appendResults(data);
-      if(data.records === data.fetched)
-        $('[data-behavior=see-more]').hide();
-      else
-        $('[data-behavior=see-more]').show();
+
+      if(typeof data.errors !== 'undefined'){
+          var message = data.errors;
+          $(".container").prepend('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh snap! </strong>'+message+'</div>');
+      }else{
+        Historico.addItem($('textarea#statement').val(),params,limit);
+
+        createHeader(data);
+        appendResults(data);
+        if(data.records === data.fetched)
+          $('[data-behavior=see-more]').hide();
+        else
+          $('[data-behavior=see-more]').show();
+
+        $("[data-type=results]").removeClass("hidden");
+        $("[data-type=console]").addClass("hidden");
+        $("#query-area").addClass("disabled");
+        $("#results-area").removeClass("hidden");
+        $('.atlCheckbox').addClass('atlCheckbox_disabled');
+        $('#query-area :input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
+
+        code.setOption('readOnly', 'nocursor');
+        $("h2[data-type=results]").append($('<small>').text(" "+data.records+" registros"));
+      }
+
       _submit.button("reset");
 
-      $("[data-type=results]").removeClass("hidden");
-      $("[data-type=console]").addClass("hidden");
-      $("#query-area").addClass("disabled");
-      $("#results-area").removeClass("hidden");
-      $('.atlCheckbox').addClass('atlCheckbox_disabled');
-      $('#query-area :input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
-
-      code.setOption('readOnly', 'nocursor');
-      $("h2[data-type=results]").append($('<small>').text(" "+data.records+" registros"));
     })
     .fail(function(xhr, status, error) {
       fail(xhr, status, error, function() {
@@ -304,7 +328,7 @@ function prepareSyntaxHighlight(){
     mode : 'text/x-sql',
     viewportMargin: Infinity,
     onKeyUp : function(stream){
-      console.log(stream);
+      // console.log(stream);
     }
     // readOnly : true
   });
@@ -532,6 +556,7 @@ var Historico = {
     _.forEach(item.params, function(valor, nome){
       _table.append('<tr><td tabindex="1">' + nome + '</td><td tabindex="1"></td><td tabindex="1">' + valor + '</td></tr>');
     });
+    _table.append('<tr><td tabindex="1">&nbsp;</td><td tabindex="1"></td><td tabindex="1"></td></tr>');
 
     /* Carregar carregarLimite */
     $('[data-behaivor=limit-input]').val(item.limit);
@@ -547,14 +572,13 @@ var Historico = {
     });
 
     $('[data-behaivor=history-list]').on('click', 'li', function(e){
-      console.log();
       if (!$(e.target).hasClass('remove-icon') && !$(e.target).hasClass('fa-trash')){
         var id = $(this).attr('data-id');
         Historico.loadItem(id);
       }
     });
 
-  },
+  }
 
 }
 $(Historico.init);
@@ -573,5 +597,13 @@ $(function(){
       $('h1, .h1, h2, .h2, h3, .h3').css('color', '#ecf0f1');
 
     };
+  });
+});
+
+
+$(function(){
+  $('.escondeIsso').click(function(){
+    $('.historico').addClass('hidden');
+    $('.console').removeClass('col-md-8').addClass('col-md-12');
   });
 });
