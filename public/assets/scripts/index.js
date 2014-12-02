@@ -238,7 +238,8 @@ function reset(statement) {
 function getErrorMessage(xhr) {
   if (xhr.responseJSON !== undefined &&  xhr.responseJSON.errors !== undefined ) {
     return getFriendlyMessage(xhr.responseJSON.errors);
-  } else if (xhr.status == 0) {
+  }
+  else if (xhr.status == 0) {
     return "There was an unexpected error when accessing the server.";
   } else {
     return xhr.statusText;

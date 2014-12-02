@@ -24,7 +24,7 @@ var Indicadores = {
 
   statements : {
     volumeVendasTotal     : "SELECT {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
-    volumeVendasDiario    : "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = :situacaoAND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY p.dataemiss ORDER BY p.dataemiss",
+    volumeVendasDiario    : "SELECT {FN CONVERT({FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})}, SQL_DATE)} AS \"DATA_EMISSAO\", COUNT(p.numeropedido) AS \"QUANTIDADE\", {FN CONVERT(SUM(p.valortotal), SQL_FLOAT)} AS \"VOLUME_VENDAS\", {FN CONVERT(SUM(p.valortotal-p.valordescontogeral), SQL_FLOAT)} AS \"VOLUME_VENDAS_LIQUIDO\", {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\"FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY p.dataemiss ORDER BY p.dataemiss",
     valorMedioDoPedido    : "SELECT {FN CONVERT(SUM(p.valortotal)/COUNT(p.numeropedido),SQL_FLOAT)} AS \"VALOR_MEDIO_PEDIDO\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
     mediaDiariaDePedidos  : "SELECT COUNT(p.numeropedido)/:duracao AS \"MEDIA_DIARIA_PEDIDOS\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
     numeroPedidosPeriodo  : "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
@@ -37,7 +37,7 @@ var Indicadores = {
 var Dashboard = {
 
   renderGraph : function(data){
-    var valores    = Dashboard.prepareDataset(data.rows);
+    var valores    = Dashboard.prepareDataset(data.statement.rows);
     valores.labels = valores.labels.length > 31 ? false : valores.labels;
 
     $('#volume-vendas').highcharts({
@@ -224,7 +224,12 @@ var Dashboard = {
       type: "POST",
       contentType: "application/json",
       url: API.address + '/statements',
-      data: JSON.stringify({"statement": statement, params : params})
+      data: JSON.stringify({
+          "statement": {
+            "sql"    : statement,
+            "params" : params
+          }
+        })
     })
     .fail(function(err){
       $(".container > .alert").remove();
@@ -331,34 +336,30 @@ var Dashboard = {
     };
 
     /* Volume de Vendas Total */
-    var statement = prepareStatement(Indicadores.statements.volumeVendasTotal, params);
-    Dashboard.getStatement(statement, params).done(function(data){
-      var valor = data.rows[0][0] || 0;
+    Dashboard.getStatement(Indicadores.statements.volumeVendasTotal, params).done(function(data){
+      var valor = data.statement.rows[0][0] || 0;
       Indicadores.items.volumeVendasTotal = valor;
       Dashboard.renderIndicador('[data-type=volume-total-de-vendas]', valor);
       Dashboard.loader("[data-type=volume-total-de-vendas]", 'hide');
     });
 
     /* Média diária de Pedidos */
-    statement = prepareStatement(Indicadores.statements.mediaDiariaDePedidos, params);
-    Dashboard.getStatement(statement, params).done(function(data){
-      var media = data.rows[0][0] || 0;
+    Dashboard.getStatement(Indicadores.statements.mediaDiariaDePedidos, params).done(function(data){
+      var media = data.statement.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=media-diaria-de-pedidos]', media);
       Dashboard.loader("[data-type=media-diaria-de-pedidos]", 'hide');
     });
 
     /* Valor Médio do Pedido */
-    statement = prepareStatement(Indicadores.statements.valorMedioDoPedido, params);
-    Dashboard.getStatement(statement, params).done(function(data){
-      var media = data.rows[0][0] || 0;
+    Dashboard.getStatement(Indicadores.statements.valorMedioDoPedido, params).done(function(data){
+      var media = data.statement.rows[0][0] || 0;
       Dashboard.renderIndicador('[data-type=valor-medio-do-pedido]', media);
       Dashboard.loader("[data-type=valor-medio-do-pedido]", 'hide');
     });
 
     /* Média de itens do Pedido */
-    statement = prepareStatement(Indicadores.statements.numeroPedidosPeriodo, params);
-    Dashboard.getStatement(statement, params).done(function(data){
-      var num   = data.rows[0][0] || 0;
+    Dashboard.getStatement(Indicadores.statements.numeroPedidosPeriodo, params).done(function(data){
+      var num   = data.statement.rows[0][0] || 0;
       if (num === 0) {
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', 0);
         Dashboard.loader("[data-type=media-itens-do-pedido]", 'hide');
@@ -366,18 +367,15 @@ var Dashboard = {
       }
 
       params.numeroPedidos = num;
-      statement = prepareStatement(Indicadores.statements.mediaItemsDoPedido, params);
-
-      Dashboard.getStatement(statement, params).done(function(data){
-        var media = data.rows[0][0] || 0;
+      Dashboard.getStatement(Indicadores.statements.mediaItemsDoPedido, params).done(function(data){
+        var media = data.statement.rows[0][0] || 0;
         Dashboard.renderIndicador('[data-type=media-itens-do-pedido]', media);
         Dashboard.loader("[data-type=media-itens-do-pedido]", 'hide');
       });
     });
 
     /* Média de itens do Pedido */
-    statement = prepareStatement(Indicadores.statements.volumeVendasDiario, params);
-    Dashboard.getStatement(statement, params).done(function(data){
+    Dashboard.getStatement(Indicadores.statements.volumeVendasDiario, params).done(function(data){
       Dashboard.renderGraph(data);
       Dashboard.loader(".grafico-content", 'hide');
     });
@@ -385,15 +383,14 @@ var Dashboard = {
     /* Produtos mais vendidos */
     function  chamaMaisVendidos(){
       window.clearInterval(timer);
-      statement = prepareStatement(Indicadores.statements.produtosMaisVendidos, params);
-      Dashboard.getStatement(statement, params).done(function(data){
+      Dashboard.getStatement(Indicadores.statements.produtosMaisVendidos, params).done(function(data){
         var colors = ['#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
         var total    = 0;
 
-        if(data.rows.length > 0){
-          var produtos = (data.rows).sort(function(a,b){
+        if(data.statement.rows.length > 0){
+          var produtos = (data.statement.rows).sort(function(a,b){
             if (a[4] > b[4])
               return -1;
             if (a[4] < b[4])
@@ -415,15 +412,14 @@ var Dashboard = {
 
     /* Clientes que mais Compraram */
     function chamaMaisClientes(){
-      statement = prepareStatement(Indicadores.statements.clientesMaisCompraram, params);
-      Dashboard.getStatement(statement, params).done(function(data){
+      Dashboard.getStatement(Indicadores.statements.clientesMaisCompraram, params).done(function(data){
         var colors  = [ "#3498db", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#9b59b6", "#34495e","#95a5a6", "#ecf0f1" ].reverse();
         var dataset = [];
         var percentual;
         var total    = 0;
 
-        if (data.rows.length > 0) {
-          var produtos = (data.rows).sort(function(a,b){
+        if (data.statement.rows.length > 0) {
+          var produtos = (data.statement.rows).sort(function(a,b){
             if (a[1] > b[1])
               return -1;
             if (a[1] < b[1])
