@@ -551,4 +551,17 @@ $(Historico.init);
 
 
 
-$(function(){$(document).on('keypress', function(e){keys += (''+e.which); if (keys === '112979910997110') {$("body").css({"background-image": 'url("http://images2.fanpop.com/image/photos/8900000/Grid-pac-man-8970124-1680-1050.jpg")', "background-attachment": 'fixed', }); }; }); });
+$(function(){
+  var keys = '';
+  $(document).on('keypress', function(e){
+    keys += (''+e.which);
+    if (keys === '112979910997110') {
+      $("body").css({
+        "background-image": 'url("http://images2.fanpop.com/image/photos/8900000/Grid-pac-man-8970124-1680-1050.jpg")',
+        "background-attachment": 'fixed', "background-size": 'cover'
+      }).append('<audio src="assets/audio/pacman_intro.mp3" autoplay loop></audio>');
+      $('h1, .h1, h2, .h2, h3, .h3').css('color', '#ecf0f1');
+
+    };
+  });
+});
