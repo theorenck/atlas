@@ -380,16 +380,31 @@ section{
   overflow: auto;
 }
 
+.list-group{
+  border: 1px solid #ecf0f1;
+}
 
+.list-group:empty{
+  display: none;
+}
 
+.list-group .list-group-item-text{
+  line-height: 20px; height: 20px; overflow: hidden;
+}
 
+.list-group.striped .list-group-item:nth-child(even){
+  background-color: #F9F9F9;
+}
 
+.list-group.striped .list-group-item:hover{
+  background-color: #ecf0f1;
+}
 
+.close-history-item{
+  opacity: 0.3;
+  float: right;
+}
 
-
-
-
-
-
-
-
+.close-history-item:hover{
+  opacity: 0.6;
+}

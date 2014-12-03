@@ -52,25 +52,7 @@
 
   <div class="container">
     <div class="row">
-
-      <div class="col-md-4 historico">
-        <h2>
-          Histórico
-          <small class="pull-right">
-            <a href="javascript:;" class="escondeIsso">
-              <span class="fa fa-arrow-left"></span>
-            </a>
-          </small>
-        </h2>
-        <div class="well">
-          <div class="wrapper-list">
-            <ul class="history-list" data-behaivor="history-list"></ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-8 console">
-
+      <div class="col-md-12">
         <div id="query-area">
           <h2 data-type="console">Console</h2>
           <h2 data-type="results" class="hidden">Resultados</h2>
@@ -140,7 +122,13 @@
           </div>
         </div>
 
-        <div  id="results-area" class="hidden">
+        <div class="row" data-type="history">
+          <div class="col-md-12 historico">
+              <div class="list-group striped" data-behaivor="history-list"></div>
+          </div>
+        </div>
+
+        <div id="results-area" class="hidden">
           <div class="row">
             <div class="col-md-12">
               <div class="panel panel-default">
@@ -171,7 +159,7 @@
   <script src="/assets/plugins/codemirror/show-hint.js"></script>
   <script src="/assets/plugins/codemirror/sql-hint.js"></script>
   <script src="/assets/plugins/mindmup/mindmup-editabletable.js"></script>
-
+  <script src="/assets/plugins/moment/moment-with-locales.js"></script>
   <script src="/assets/scripts/index.js"></script>
 
   <script id="tableResultsHeader" type="text/template">
@@ -181,6 +169,7 @@
         <% }); %>
       </tr>
   </script>
+
   <script id="tableResultsRows" type="text/template">
     <% _.forEach(rows, function(row) { %>
     <tr>
@@ -191,15 +180,21 @@
     <% }); %>
   </script>
 
+
   <script id="historyItems" type="text/template">
     <% _.forEach(rows, function(row){ %>
-      <li data-id="<%= row.id %>">
-
-        <span class="statement-text"><%= row.statement %></span>
-        <div class="remove-icon">
-          <a href="javascript:void(0);"><span class="fa fa-2x fa-trash pull-left"></span></a>
-        </div>
-      </li>
+    <a href="#<%= row.id %>" class="list-group-item" data-id="<%= row.id %>">
+      <p class="list-group-item-text">
+        <span class="close-history-item">
+          <span class="fa fa-close"></span>
+        </span>
+        <span class="label label-success" style="margin-right:5px">SELECT</span>
+        <%= row.statement %>
+      </p>
+      <h6 class="list-group-item-heading" style="font-weight:bold; color:#2c3e50; padding-top:10px;">
+        <%= moment(row.created_at).fromNow() %>
+      </h6>
+    </a>
     <% }); %>
   </script>
 </body>

@@ -1,3 +1,4 @@
+moment.locale('pt-br');
 API = { address : "http://localhost:3000/api" };
 
 var editor;
@@ -148,7 +149,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
           $('[data-behavior=see-more]').show();
 
         $("[data-type=results]").removeClass("hidden");
-        $("[data-type=console]").addClass("hidden");
+        $("[data-type=console], [data-type=history]").addClass("hidden");
         $("#query-area").addClass("disabled");
         $("#results-area").removeClass("hidden");
         $('.atlCheckbox').addClass('atlCheckbox_disabled');
@@ -209,7 +210,7 @@ $('[data-behavior~=see-more]').on('click', function() {
 
 $('[data-behavior~=edit-sql]').on('click', function(){
   $("[data-type=results]").addClass("hidden");
-  $("[data-type=console]").removeClass("hidden");
+  $("[data-type=console], [data-type=history]").removeClass("hidden");
   $("#results-area").addClass("hidden");
   $("#query-area").removeClass("disabled");
   $('.atlCheckbox').removeClass('atlCheckbox_disabled');
@@ -521,19 +522,23 @@ var Historico = {
 
   render : function(){
     var history = JSON.parse(localStorage.getItem('history')) || [];
-    var view    = $('#historyItems').html();
-    var template= _.template(view, { rows : history.reverse() });
-    $('.history-list').html(template);
+    if (history.length) {
+      var view    = $('#historyItems').html();
+      var template= _.template(view, { rows : history.reverse() });
+      $('[data-behaivor=history-list]').html(template);
+    }else{
+      $('[data-behaivor=history-list]').html('');
+    }
   },
 
   addItem : function(statement, params, limit){
     var history = JSON.parse(localStorage.getItem('history')) || [];
     var item    = {
-      id        : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
-      statement : statement,
-      params    : params,
-      limit     : limit,
-      inserted  : new Date()
+      "id"         : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
+      "statement"  : statement,
+      "params"     : params,
+      "limit"      : limit,
+      "created_at"  : new Date()
     }
     history.push(item);
     localStorage.setItem('history', JSON.stringify(history));
@@ -568,17 +573,15 @@ var Historico = {
   init : function(){
     Historico.render();
 
-    $('[data-behaivor=history-list]').on('click', 'a', function(){
-      var id = $(this).closest('li').attr('data-id');
+    $('[data-behaivor=history-list]').on('click', '.close-history-item', function(){
+      var id = $(this).closest('a').attr('data-id');
       Historico.removeItem(id);
       Historico.render();
     });
 
-    $('[data-behaivor=history-list]').on('click', 'li', function(e){
-      if (!$(e.target).hasClass('remove-icon') && !$(e.target).hasClass('fa-trash')){
-        var id = $(this).attr('data-id');
-        Historico.loadItem(id);
-      }
+    $('[data-behaivor=history-list]').on('click', 'a', function(e){
+      var id = $(this).attr('data-id');
+      Historico.loadItem(id);
     });
 
   }
