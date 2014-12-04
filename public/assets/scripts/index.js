@@ -175,6 +175,9 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
 
     })
     .fail(function(xhr, status, error) {
+      code.setOption('readOnly', false);
+      $('.atlCheckbox').removeClass('atlCheckbox_disabled');
+      $('[data-behaivor=limit-input]').removeAttr('disabled');
       fail(xhr, status, error, function() {
         _submit.button("reset");
       });
