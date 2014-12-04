@@ -160,6 +160,8 @@
   <script src="/assets/plugins/codemirror/sql-hint.js"></script>
   <script src="/assets/plugins/mindmup/mindmup-editabletable.js"></script>
   <script src="/assets/plugins/moment/moment-with-locales.js"></script>
+  <script src="/assets/plugins/floatThead/jquery.floatThead-slim.min.js"></script>
+
   <script src="/assets/scripts/index.js"></script>
 
   <script id="tableResultsHeader" type="text/template">
@@ -188,7 +190,7 @@
         <span class="close-history-item">
           <span class="fa fa-close"></span>
         </span>
-        <span class="label label-success" style="margin-right:5px">SELECT</span>
+        <span class="label label-<%= row.context %>"><%= row.type %></span>
         <%= row.statement %>
       </p>
       <h6 class="list-group-item-heading" style="font-weight:bold; color:#2c3e50; padding-top:10px;">

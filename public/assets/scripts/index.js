@@ -157,6 +157,16 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
 
         code.setOption('readOnly', 'nocursor');
         $("h2[data-type=results]").append($('<small>').text(" "+data.statement.records+" registros"));
+
+        // cria cabeçalhos que acompanhem o scroll para a tabela
+        $table = $('#results .table');
+        $table.floatThead('destroy');
+        $table.floatThead({
+            scrollContainer: function($table){
+            return $table.closest('.wrapper');
+          }
+        });
+
       }
 
       _submit.button("reset");
@@ -533,12 +543,22 @@ var Historico = {
 
   addItem : function(statement, params, limit){
     var history = JSON.parse(localStorage.getItem('history')) || [];
+    var context = '';
+    var type    = '';
+
+    if(statement.match(/^\s*SELECT\s.*\s*$/i)){
+      type    = 'SELECT';
+      context = 'info';
+    }
+
     var item    = {
       "id"         : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
       "statement"  : statement,
       "params"     : params,
       "limit"      : limit,
-      "created_at"  : new Date()
+      "created_at" : new Date(),
+      'type'       : type,
+      'context'    : context
     }
     history.push(item);
     localStorage.setItem('history', JSON.stringify(history));
@@ -552,22 +572,32 @@ var Historico = {
   },
 
   loadItem : function(id){
-    var history = JSON.parse(localStorage.getItem('history')) || [];
-    var item    = _.find(history, function(historyItem) { return historyItem.id === id });
-    var _table  = $('[data-behaivor=table-editable] tbody');
 
-    /* Carregar no codeview */
-    Index.editor.setValue(item.statement);
+    var confirmacao = confirm("Você tem certeza que deseja carregar esse item, você perderá qualquer alteração não salva?");
 
-    /* Carregar parâmetros */
-    _table.find('tr').remove();
-    _.forEach(item.params, function(valor, nome){
-      _table.append('<tr><td tabindex="1">' + nome + '</td><td tabindex="1"></td><td tabindex="1">' + valor + '</td></tr>');
-    });
-    _table.append('<tr><td tabindex="1">&nbsp;</td><td tabindex="1"></td><td tabindex="1"></td></tr>');
+    if (confirmacao) {
+      var history = JSON.parse(localStorage.getItem('history')) || [];
+      var item    = _.find(history, function(historyItem) { return historyItem.id === id });
+      var _table  = $('[data-behaivor=table-editable] tbody');
 
-    /* Carregar carregarLimite */
-    $('[data-behaivor=limit-input]').val(item.limit);
+      /* Carregar no codeview */
+      Index.editor.setValue(item.statement);
+
+      /* Carregar parâmetros */
+      _table.find('tr').remove();
+      _.forEach(item.params, function(valor, nome){
+        _table.append('<tr><td tabindex="1">' + nome + '</td><td tabindex="1"></td><td tabindex="1">' + valor + '</td></tr>');
+      });
+      _table.append('<tr><td tabindex="1">&nbsp;</td><td tabindex="1"></td><td tabindex="1"></td></tr>');
+
+      /* Carregar carregarLimite */
+      $('[data-behaivor=limit-input]').val(item.limit);
+
+      $('.container > .alert').remove();
+      var message = "Muito bem amiguinho, o item foi carregado com sucesso!";
+      $(".container").prepend('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><strong>Oh great! </strong>'+message+'</div>');
+    };
+
   },
 
   init : function(){
@@ -580,8 +610,10 @@ var Historico = {
     });
 
     $('[data-behaivor=history-list]').on('click', 'a', function(e){
-      var id = $(this).attr('data-id');
-      Historico.loadItem(id);
+      if( $(e.target).is(':not(.fa-close)') && $(e.target).is(':not(.close-history-item)')){
+        var id = $(this).attr('data-id');
+        Historico.loadItem(id);
+      }
     });
 
   }

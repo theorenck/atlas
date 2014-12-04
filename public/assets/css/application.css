@@ -400,6 +400,10 @@ section{
   background-color: #ecf0f1;
 }
 
+.list-group .label{
+  margin-right: 5px;
+}
+
 .close-history-item{
   opacity: 0.3;
   float: right;
@@ -407,4 +411,13 @@ section{
 
 .close-history-item:hover{
   opacity: 0.6;
+}
+
+#results-area{
+  padding-bottom: 20px;
+}
+
+
+.table thead tr{
+  background: #FFF;
 }
