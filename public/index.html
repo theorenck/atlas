@@ -185,12 +185,12 @@
 
   <script id="historyItems" type="text/template">
     <% _.forEach(rows, function(row){ %>
-    <a href="#<%= row.id %>" class="list-group-item" data-id="<%= row.id %>">
+    <a href="#" class="list-group-item" data-id="<%= row.id %>">
       <p class="list-group-item-text">
         <span class="close-history-item">
           <span class="fa fa-close"></span>
         </span>
-        <span class="label label-<%= row.context %>"><%= row.type %></span>
+        <span class="label label-<%= Historico.getStyleType(row.type) %>"><%= row.type %></span>
         <%= row.statement %>
       </p>
       <h6 class="list-group-item-heading" style="font-weight:bold; color:#2c3e50; padding-top:10px;">

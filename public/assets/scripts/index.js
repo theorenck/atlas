@@ -131,7 +131,12 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
           "offset": offset,
           "params" : params
         }
-      })
+      }),
+      beforeSend : function(){
+        code.setOption('readOnly', 'nocursor');
+        $('.atlCheckbox').addClass('atlCheckbox_disabled');
+        $('[data-behaivor=limit-input]').attr('disabled', 'disabled');
+      }
     })
     .done(function(data) {
 
@@ -152,10 +157,7 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
         $("[data-type=console], [data-type=history]").addClass("hidden");
         $("#query-area").addClass("disabled");
         $("#results-area").removeClass("hidden");
-        $('.atlCheckbox').addClass('atlCheckbox_disabled');
         $('#query-area :input:not([data-behavior=edit-sql])').attr('disabled', 'disabled');
-
-        code.setOption('readOnly', 'nocursor');
         $("h2[data-type=results]").append($('<small>').text(" "+data.statement.records+" registros"));
 
         // cria cabeçalhos que acompanhem o scroll para a tabela
@@ -527,7 +529,6 @@ $(document).on('mouseleave', '[data-type=checkbox]', function(){
 });
 
 
-
 var Historico = {
 
   render : function(){
@@ -541,24 +542,24 @@ var Historico = {
     }
   },
 
+  getStyleType : function(type){
+    console.log(type);
+    switch(type){
+      case "SELECT":
+        return 'info';
+    }
+  },
+
   addItem : function(statement, params, limit){
     var history = JSON.parse(localStorage.getItem('history')) || [];
-    var context = '';
-    var type    = '';
-
-    if(statement.match(/^\s*SELECT\s.*\s*$/i)){
-      type    = 'SELECT';
-      context = 'info';
-    }
-
+    var type    = statement.match(/^\s*(SELECT|DELETE|UPDATE|INSERT)\s.*\s*$/i)[1].toUpperCase();
     var item    = {
       "id"         : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
       "statement"  : statement,
       "params"     : params,
       "limit"      : limit,
       "created_at" : new Date(),
-      'type'       : type,
-      'context'    : context
+      'type'       : type
     }
     history.push(item);
     localStorage.setItem('history', JSON.stringify(history));
