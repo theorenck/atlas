@@ -260,9 +260,15 @@ function getErrorMessage(xhr) {
 }
 
 function getFriendlyMessage(message) {
-  return message.replace(
-    /.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,""
-  );
+  var newMessage = [];
+
+  _.forEach(message, function(el){
+    newMessage.push(el[0].replace(
+      /.*\[SoftVelocity Inc\.\]\[TopSpeed ODBC Driver\](\[ISAM\]ISAM)?/,""
+    ));
+  });
+
+  return newMessage.join(', ');
 }
 
 function createHeader(data) {
@@ -543,7 +549,6 @@ var Historico = {
   },
 
   getStyleType : function(type){
-    console.log(type);
     switch(type){
       case "SELECT":
         return 'info';
