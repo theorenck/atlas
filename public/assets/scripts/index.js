@@ -560,7 +560,7 @@ var Historico = {
 
   addItem : function(statement, params, limit){
     var history = JSON.parse(localStorage.getItem('history')) || [];
-    var type    = statement.match(/^\s*(SELECT|DELETE|UPDATE|INSERT)\s.*\s*$/i)[1].toUpperCase();
+    var type    = statement.match(/^\s*(SELECT|DELETE|UPDATE|INSERT)\b.*\s*$/i)[1].toUpperCase();
     var item    = {
       "id"         : parseInt(Math.random() * 0xFFFFFF, 10).toString(16),
       "statement"  : statement,
