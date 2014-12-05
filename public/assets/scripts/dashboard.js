@@ -30,7 +30,8 @@ var Indicadores = {
     numeroPedidosPeriodo  : "SELECT COUNT(*) AS \"PEDIDOS_PERIODO\" FROM zw14vped p WHERE p.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
     mediaItemsDoPedido    : "SELECT COUNT(*)/:numeroPedidos AS \"MEDIA_ITENS_PEDIDO\" FROM {OJ zw14vpei LEFT OUTER JOIN zw14vped ON zw14vped.numeropedido=zw14vpei.numeropedido} WHERE zw14vped.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, zw14vped.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim}",
     produtosMaisVendidos  : "SELECT I.CODIGO AS \"CODIGO\", I.DESCRICAO AS \"DESCRICAO\", SUM(I.QUANTIDADE) AS \"QUANTIDADE\", {FN TRUNCATE({FN ROUND(AVG(I.PRECOUNIT),2)},2)} AS \"PRECO_MEDIO\", {FN CONVERT({FN TRUNCATE({FN ROUND(SUM(I.VALOR),2)},2)}, SQL_FLOAT)} AS \"TOTAL\" FROM {OJ zw14vpei I JOIN zw14vped V ON V.NUMEROPEDIDO = I.NUMEROPEDIDO } WHERE V.situacao = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY I.CODIGO, I.DESCRICAO ORDER BY 1",
-    clientesMaisCompraram : "SELECT V.NOMECLIENTE AS \"CLIENTE\", {FN CONVERT({FN ROUND(SUM(V.VALORTOTALGERAL),2)},SQL_FLOAT)} AS \"TOTAL\" FROM ZW14VPED V WHERE V.SITUACAO = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY V.NOMECLIENTE ORDER BY 1"
+    clientesMaisCompraram : "SELECT V.NOMECLIENTE AS \"CLIENTE\", {FN CONVERT({FN ROUND(SUM(V.VALORTOTALGERAL),2)},SQL_FLOAT)} AS \"TOTAL\" FROM ZW14VPED V WHERE V.SITUACAO = :situacao AND {FN TIMESTAMPADD (SQL_TSI_DAY, V.DATAEMISS-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY V.NOMECLIENTE ORDER BY 1",
+    pedidosPorSituacao    : "SELECT p.situacao AS \"SITUACAO\", count(*) AS \"QUANTIDADE\" FROM  zw14vped p WHERE p.situacao IS NOT NULL AND {FN TIMESTAMPADD (SQL_TSI_DAY, p.dataemiss-72687, {D '2000-01-01'})} BETWEEN {TS :inicio} AND {TS :fim} GROUP BY   p.situacao"
   }
 };
 
@@ -376,6 +377,7 @@ var Dashboard = {
 
     /* Média de itens do Pedido */
     Dashboard.getStatement(Indicadores.statements.volumeVendasDiario, params).done(function(data){
+      console.log(data);
       Dashboard.renderGraph(data);
       Dashboard.loader(".grafico-content", 'hide');
     });
@@ -409,6 +411,32 @@ var Dashboard = {
         Dashboard.loader('[data-type=produtos-mais-vendidos]', 'hide');
       });
     }
+
+     Dashboard.getStatement(Indicadores.statements.pedidosPorSituacao, params).done(function(data){
+      var colors  = ["#34495e", "#9b59b6","#95a5a6", "#ecf0f1", '#1abc9c', "#2ecc71", "#e74c3c", "#e67e22", "#f1c40f", "#3498db"];
+      var dataset = [];
+      var percentual;
+      var total   = 0;
+
+      if(data.statement.rows.length > 0){
+        var produtos = (data.statement.rows).sort(function(a,b){
+          if (a[1] > b[1])
+            return -1;
+          if (a[1] < b[1])
+            return 1;
+          return 0;
+        });
+
+        for (var i = 0; i < produtos.length; i++) {
+          percentual = produtos[i][1];
+          dataset.push([ $.trim(produtos[i][0].toUpperCase()), percentual ]);
+          total += percentual;
+        };
+        // dataset.push([ "OUTROS", 100 - total ]);
+      }
+      Dashboard.renderPie('[data-type=pedidos-por-situacao] .pie', dataset, colors, '<h3>Pedidos por situação</h3>');
+      Dashboard.loader('[data-type=pedidos-por-situacao]', 'hide');
+    });
 
     /* Clientes que mais Compraram */
     function chamaMaisClientes(){
