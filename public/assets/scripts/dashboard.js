@@ -1,6 +1,5 @@
 moment.locale('pt-br');
 var timer;
-var API = { address : "http://localhost:3000/api" };
 
 var Indicadores = {
 
