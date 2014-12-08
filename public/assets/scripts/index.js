@@ -133,7 +133,8 @@ $('[data-behavior~=execute-sql]').on('submit', function() {
         }
       }),
       beforeSend : function(){
-        code.setOption('readOnly', 'nocursor');
+        code.setOption('readOnly', true);
+        $('.CodeMirror').addClass('readOnly');
         $('.atlCheckbox').addClass('atlCheckbox_disabled');
         $('[data-behaivor=limit-input]').attr('disabled', 'disabled');
       }
@@ -372,7 +373,10 @@ var Index = {
 
   init : function(){
     Index.editor = prepareSyntaxHighlight();
-    $('[data-behaivor=table-editable]').editableTableWidget({editor: $('<input id="table-editable-input">')});
+    $('[data-behaivor=table-editable]').editableTableWidget({
+      editor: $('<input id="table-editable-input">'),
+
+    });
 
     var isLastTr;
     var isLastTd;
