@@ -1,4 +1,5 @@
 moment.locale('pt-br');
+var API = Configuration.api;
 var timer;
 
 var Indicadores = {

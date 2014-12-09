@@ -1,5 +1,5 @@
 moment.locale('pt-br');
-
+var API = Configuration.api;
 var editor;
 
 Tables = {

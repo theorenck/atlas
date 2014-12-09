@@ -7,8 +7,14 @@
   <title>Atlas Dashboard</title>
   <link rel="stylesheet" href="/assets/css/bootstrap-flatly.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
-  <link rel="stylesheet" href="/assets/css/application.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/plugins/ducksboard-gridster/jquery.gridster.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/application.css" rel="stylesheet">
+  <style>
+  [data-col="1"]{
+    width: 20%;
+  }
+  </style>
 </head>
 <body>
 
@@ -73,70 +79,70 @@
     <!-- Inicio Indicadores -->
     <section class="indicadores-container">
       <div class="row">
+        <div class="gridster">
+            <div data-row="1" data-col="2" data-sizex="1" data-sizey="1" class="col-sm-6 col-xs-12 col-md-3">
+              <div class="indicador alert alert-success" data-behaivor="indicador" data-type="volume-total-de-vendas">
+                <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
 
-        <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-success" data-behaivor="indicador" data-type="volume-total-de-vendas">
-            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
-
-            <h4 class="title">
-              Volume de vendas
-              <small>
-                <span class="pull-right glyphicon glyphicon-question-sign"></span>
-              </small>
-            </h4>
-            <div class="info">
-              <span class="unidade">R$ </span>
-              <span class="valor"></span>
-              <span class="grandeza"></span>
+                <h4 class="title">
+                  Volume de vendas
+                  <small>
+                    <span class="pull-right glyphicon glyphicon-question-sign"></span>
+                  </small>
+                </h4>
+                <div class="info">
+                  <span class="unidade">R$ </span>
+                  <span class="valor"></span>
+                  <span class="grandeza"></span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-info" data-behaivor="indicador" data-type="valor-medio-do-pedido">
-            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
-            <h4 class="title">
-              Pedido médio
-              <small><button class="pull-right" id="popover"><i class="glyphicon glyphicon-question-sign"></i></button></small>
-            </h4>
-            <div class="info">
-              <span class="unidade">R$ </span>
-              <span class="valor"></span>
-              <span class="grandeza"></span>
+            <div data-row="1" data-col="1" data-sizex="1" data-sizey="1" class="col-sm-6 col-xs-12 col-md-3">
+              <div class="indicador alert alert-info" data-behaivor="indicador" data-type="valor-medio-do-pedido">
+                <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+                <h4 class="title">
+                  Pedido médio
+                  <small><button class="pull-right" id="popover"><i class="glyphicon glyphicon-question-sign"></i></button></small>
+                </h4>
+                <div class="info">
+                  <span class="unidade">R$ </span>
+                  <span class="valor"></span>
+                  <span class="grandeza"></span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-warning" data-behaivor="indicador" data-type="media-diaria-de-pedidos">
-            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
-            <h4 class="title">
-              Média diária
-              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-            </h4>
-            <div class="info">
-              <span class="valor"></span>
-              <span class="grandeza"></span>
-              <span class="unidade"> pedidos</span>
+            <div data-row="1" data-col="1" data-sizex="2" data-sizey="1" class="col-sm-6 col-xs-12 col-md-3">
+              <div class="indicador alert alert-warning" data-behaivor="indicador" data-type="media-diaria-de-pedidos">
+                <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+                <h4 class="title">
+                  Média diária
+                  <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+                </h4>
+                <div class="info">
+                  <span class="valor"></span>
+                  <span class="grandeza"></span>
+                  <span class="unidade"> pedidos</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-sm-6 col-xs-12 col-md-3">
-          <div class="indicador alert alert-alternate" data-behaivor="indicador" data-type="media-itens-do-pedido">
-            <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
-            <h4 class="title">
-              Média de itens
-              <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
-            </h4>
-            <div class="info">
-              <span class="valor"></span>
-              <span class="grandeza"></span>
-              <span class="unidade"> itens</span>
+            <div data-row="1" data-col="1" data-sizex="2" data-sizey="1" class="col-sm-6 col-xs-12 col-md-3">
+              <div class="indicador alert alert-alternate" data-behaivor="indicador" data-type="media-itens-do-pedido">
+                <div class="loader loader-inverse"><p class="text-center"><span class="fa fa-3x fa-spinner fa-spin"></span></p></div>
+                <h4 class="title">
+                  Média de itens
+                  <small><span class="pull-right glyphicon glyphicon-question-sign"></span></small>
+                </h4>
+                <div class="info">
+                  <span class="valor"></span>
+                  <span class="grandeza"></span>
+                  <span class="unidade"> itens</span>
+                </div>
+              </div>
             </div>
-          </div>
         </div>
-
       </div>
     </section>
     <!-- Fim Indicadores -->
@@ -180,15 +186,29 @@
 
   <!-- scripts externos -->
   <script src="/assets/plugins/jquery/jquery.min.js"></script>
-	<script src="/assets/plugins/bootstrap/bootstrap.min.js"></script>
+  <script src="/assets/plugins/ducksboard-gridster/jquery.gridster.min.js"></script>
+  <script src="/assets/plugins/bootstrap/bootstrap.min.js"></script>
   <script src="/assets/plugins/moment/moment-with-locales.js"></script>
   <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
   <script src="/assets/plugins/lodash/lodash.min.js"></script>
   <script src="/assets/scripts/helpers/number_helpers.js"></script>
-
-  <script src="/configuration.js"></script>
+  <script src="/assets/scripts/api.js"></script>
   <script src="/assets/scripts/dashboard.js"></script>
+
+<script>
+  $(function(){ //DOM Ready
+
+    $(".gridster").gridster({
+        widget_selector: 'div',
+        widget_margins: [10, 10],
+        min_cols : 1,
+        max_cols : 6,
+        widget_base_dimensions: [250, 140]
+    });
+
+  });
+</script>
 
 </body>
 </html>
